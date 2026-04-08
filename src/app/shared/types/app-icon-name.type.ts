@@ -1,0 +1,16 @@
+export type AppIconName =
+  | 'dashboard'
+  | 'employees'
+  | 'attendance'
+  | 'leave'
+  | 'payroll'
+  | 'settings'
+  | 'search'
+  | 'bell'
+  | 'menu'
+  | 'logout'
+  | 'trend'
+  | 'sparkles'
+  | 'announcement'
+  | 'upload'
+  | 'briefcase';

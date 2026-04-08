@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+@source "../node_modules/flowbite-angular";
+
+:root {
+  --brand-blue: #1f6fb2;
+  --brand-blue-dark: #185a91;
+  --brand-green: #2f7d4a;
+  --brand-green-dark: #1f5e38;
+  --brand-gold: #d9a11a;
+
+  --ui-bg: #f8fafc;
+  --ui-surface: #ffffff;
+  --ui-border: #e2e8f0;
+  --ui-text: #0f172a;
+  --ui-muted: #475569;
+
+  --semantic-success: #16a34a;
+  --semantic-warning: #f59e0b;
+  --semantic-danger: #dc2626;
+  --semantic-info: #0ea5e9;
+
+  --font-sans: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+  --font-display: 'Manrope', 'Segoe UI', sans-serif;
+}
+
+@theme inline {
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blueDark: var(--brand-blue-dark);
+  --color-brand-green: var(--brand-green);
+  --color-brand-greenDark: var(--brand-green-dark);
+  --color-brand-gold: var(--brand-gold);
+  --color-ui-bg: var(--ui-bg);
+  --color-ui-surface: var(--ui-surface);
+  --color-ui-border: var(--ui-border);
+  --color-ui-text: var(--ui-text);
+  --color-ui-muted: var(--ui-muted);
+  --color-success: var(--semantic-success);
+  --color-warning: var(--semantic-warning);
+  --color-danger: var(--semantic-danger);
+  --color-info: var(--semantic-info);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(31 111 178 / 0.45) rgb(226 232 240 / 0.9);
+  }
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--ui-text);
+    background-color: var(--ui-bg);
+    background-image:
+      radial-gradient(circle at top left, rgb(31 111 178 / 0.08), transparent 26%),
+      radial-gradient(circle at top right, rgb(217 161 26 / 0.08), transparent 18%);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  *::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: rgba(226, 232, 240, 0.85);
+    border-radius: 999px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+    background: linear-gradient(180deg, rgba(31, 111, 178, 0.75), rgba(24, 90, 145, 0.92));
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(31, 111, 178, 0.9), rgba(24, 90, 145, 1));
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+@layer components {
+  .surface-card {
+    @apply rounded-[28px] border border-ui-border bg-ui-surface shadow-[0_20px_45px_-30px_rgba(15,23,42,0.28)];
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-2xl bg-brand-blue px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-brand-blueDark focus:outline-none focus:ring-4 focus:ring-brand-blue/20;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-2xl border border-ui-border bg-ui-surface px-4 py-2.5 text-sm font-semibold text-ui-text transition duration-200 hover:border-brand-blue/20 hover:bg-brand-blue/5 hover:text-brand-blue focus:outline-none focus:ring-4 focus:ring-brand-blue/10;
+  }
+
+  .sidebar-shell {
+    @apply border-r border-slate-800/80 bg-slate-950 text-slate-100 shadow-[0_24px_60px_-36px_rgba(2,6,23,0.85)];
+  }
+
+  .muted-copy {
+    @apply text-sm leading-6 text-ui-muted;
+  }
+
+  .sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(217 161 26 / 0.6) rgb(15 23 42 / 0.2);
+  }
+
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.18);
+    border-radius: 999px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+    background: linear-gradient(180deg, rgba(217, 161, 26, 0.7), rgba(31, 111, 178, 0.72));
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(217, 161, 26, 0.88), rgba(31, 111, 178, 0.9));
+  }
+}
