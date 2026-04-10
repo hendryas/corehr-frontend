@@ -39,7 +39,7 @@ import {
 
       <app-employee-form
         [form]="form"
-        mode="create"
+        [mode]="'create'"
         [departments]="store.departments()"
         [positions]="store.positions()"
         [isReferenceLoading]="store.isReferenceLoading()"

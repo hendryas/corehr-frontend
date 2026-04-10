@@ -64,20 +64,20 @@ import { EmployeeStatusBadgeComponent } from '../../ui/employee-status-badge/emp
         </section>
 
         <app-employee-info-section
-          title="Personal information"
-          description="General contact and profile details."
+          [title]="'Personal information'"
+          [description]="'General contact and profile details.'"
           [items]="personalInfo()"
         />
 
         <app-employee-info-section
-          title="Work information"
-          description="Role, department, and work-related details."
+          [title]="'Work information'"
+          [description]="'Role, department, and work-related details.'"
           [items]="workInfo()"
         />
 
         <app-employee-info-section
-          title="Status"
-          description="Current employee status and latest record updates."
+          [title]="'Status'"
+          [description]="'Current employee status and latest record updates.'"
           [items]="statusInfo()"
         />
       }
