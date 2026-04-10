@@ -54,6 +54,10 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/attendance/attendance.routes').then((m) => m.attendanceRoutes),
       },
+      {
+        path: 'leave',
+        loadChildren: () => import('./features/leave/leave.routes').then((m) => m.leaveRoutes),
+      },
     ],
   },
   {
