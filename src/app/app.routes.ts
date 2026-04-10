@@ -44,6 +44,11 @@ export const routes: Routes = [
             (m) => m.DashboardHomeComponent,
           ),
       },
+      {
+        path: 'employees',
+        loadChildren: () =>
+          import('./features/employees/employees.routes').then((m) => m.employeeRoutes),
+      },
     ],
   },
   {
