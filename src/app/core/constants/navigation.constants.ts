@@ -5,6 +5,7 @@ export const DASHBOARD_NAV_ITEMS: NavigationItem[] = [
   { label: 'Employees', route: '/employees', icon: 'employees' },
   { label: 'Attendance', route: '/attendance', icon: 'attendance' },
   { label: 'Leave', route: '/leave', icon: 'leave' },
+  { label: 'Organization', route: '/organization', icon: 'briefcase' },
   { label: 'Payroll', route: '/dashboard/payroll', icon: 'payroll', disabled: true },
   { label: 'Settings', route: '/dashboard/settings', icon: 'settings', disabled: true },
 ];

@@ -58,6 +58,13 @@ export const routes: Routes = [
         path: 'leave',
         loadChildren: () => import('./features/leave/leave.routes').then((m) => m.leaveRoutes),
       },
+      {
+        path: 'organization',
+        loadChildren: () =>
+          import('./features/organization/organization.routes').then(
+            (m) => m.organizationRoutes,
+          ),
+      },
     ],
   },
   {
