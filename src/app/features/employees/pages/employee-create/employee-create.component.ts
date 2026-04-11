@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { EmployeesStore } from '../../state/employees.store';
 import { EmployeeFormComponent } from '../../ui/employee-form/employee-form.component';
@@ -43,6 +43,9 @@ import {
         [departments]="store.departments()"
         [positions]="store.positions()"
         [isReferenceLoading]="store.isReferenceLoading()"
+        [isEmployeeCodeLoading]="store.isEmployeeCodeLoading()"
+        [employeeCodeStatusMessage]="employeeCodeStatusMessage()"
+        [employeeCodeStatusTone]="employeeCodeStatusTone()"
         [isSubmitting]="store.isSubmitting()"
         [submitError]="store.submitError()"
         [fieldErrors]="store.formErrors()"
@@ -56,10 +59,22 @@ export class EmployeeCreateComponent {
   private readonly router = inject(Router);
   protected readonly store = inject(EmployeesStore);
   protected readonly form = buildEmployeeForm('create');
+  protected readonly employeeCodeStatusMessage = computed(() => {
+    if (this.store.employeeCodeError()) {
+      return this.store.employeeCodeError();
+    }
+
+    return this.store.suggestedEmployeeCode()
+      ? 'Employee code was prepared from the latest employee records.'
+      : null;
+  });
+  protected readonly employeeCodeStatusTone = computed<'default' | 'warning'>(() =>
+    this.store.employeeCodeError() ? 'warning' : 'default',
+  );
 
   constructor() {
     this.store.clearSubmitState();
-    void this.store.loadReferenceData();
+    void this.initializeForm();
   }
 
   protected async submit(): Promise<void> {
@@ -75,6 +90,28 @@ export class EmployeeCreateComponent {
   }
 
   protected reloadReferenceData(): void {
-    void this.store.loadReferenceData(true);
+    void this.initializeForm(true);
+  }
+
+  private async initializeForm(forceReload = false): Promise<void> {
+    await Promise.all([
+      this.store.loadReferenceData(forceReload),
+      this.store.loadNextEmployeeCode(forceReload),
+    ]);
+
+    this.applySuggestedEmployeeCode();
+  }
+
+  private applySuggestedEmployeeCode(): void {
+    const employeeCodeControl = this.form.controls.employeeCode;
+    const suggestedEmployeeCode = this.store.suggestedEmployeeCode();
+
+    if (!suggestedEmployeeCode || employeeCodeControl.dirty || employeeCodeControl.value.trim()) {
+      return;
+    }
+
+    employeeCodeControl.setValue(suggestedEmployeeCode);
+    employeeCodeControl.markAsPristine();
+    employeeCodeControl.markAsUntouched();
   }
 }

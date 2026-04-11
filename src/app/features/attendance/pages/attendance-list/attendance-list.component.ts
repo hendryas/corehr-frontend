@@ -42,6 +42,77 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="grid gap-6">
+      <section class="surface-card p-6">
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div class="space-y-3">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-blue">Today attendance</p>
+              <h2 class="mt-2 text-2xl font-bold text-ui-text">{{ store.todayAttendanceState().title }}</h2>
+              <p class="mt-2 muted-copy">{{ store.todayAttendanceState().description }}</p>
+            </div>
+
+            @if (store.isTodayAttendanceLoading()) {
+              <p class="text-sm text-ui-muted">Loading today attendance status...</p>
+            } @else if (store.todayAttendanceError()) {
+              <div class="rounded-[20px] border border-warning/20 bg-warning/5 px-4 py-3">
+                <p class="text-sm font-medium text-warning">{{ store.todayAttendanceError() }}</p>
+              </div>
+            } @else if (store.todayAttendance(); as todayAttendance) {
+              <div class="grid gap-3 sm:grid-cols-3">
+                <div class="rounded-[22px] border border-ui-border bg-ui-surface px-4 py-3">
+                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ui-muted">Attendance date</p>
+                  <p class="mt-2 text-sm font-semibold text-ui-text">{{ todayAttendance.attendanceDateLabel }}</p>
+                </div>
+                <div class="rounded-[22px] border border-ui-border bg-ui-surface px-4 py-3">
+                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ui-muted">Check in</p>
+                  <p class="mt-2 text-sm font-semibold text-ui-text">{{ todayAttendance.checkInLabel }}</p>
+                </div>
+                <div class="rounded-[22px] border border-ui-border bg-ui-surface px-4 py-3">
+                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ui-muted">Check out</p>
+                  <p class="mt-2 text-sm font-semibold text-ui-text">{{ todayAttendance.checkOutLabel }}</p>
+                </div>
+              </div>
+            }
+
+            @if (store.todayAttendanceSubmitError()) {
+              <div class="rounded-[20px] border border-danger/20 bg-danger/5 px-4 py-3">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p class="text-sm font-medium text-danger">{{ store.todayAttendanceSubmitError() }}</p>
+                  <button type="button" class="btn-secondary" (click)="store.clearTodayAttendanceSubmitError()">Dismiss</button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="flex flex-col gap-3 lg:min-w-60">
+            @if (store.todayAttendanceState().action === 'completed' || store.todayAttendanceState().action === 'unavailable') {
+              <button type="button" class="btn-secondary justify-center" disabled>
+                {{ store.todayAttendanceState().actionLabel }}
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="btn-primary justify-center"
+                [disabled]="store.isTodayAttendanceLoading() || store.isTodayAttendanceSubmitting()"
+                (click)="handleTodayAttendanceAction()"
+              >
+                {{
+                  store.isTodayAttendanceSubmitting()
+                    ? store.todayAttendanceState().action === 'check-in'
+                      ? 'Checking in...'
+                      : 'Checking out...'
+                    : store.todayAttendanceState().actionLabel
+                }}
+              </button>
+            }
+
+            <p class="text-sm text-ui-muted">
+              Personal attendance actions are validated again by the backend, including approved leave checks for today.
+            </p>
+          </div>
+        </div>
+      </section>
+
       @if (store.deleteSuccessMessage()) {
         <div class="pointer-events-none fixed right-4 top-24 z-50 sm:right-6">
           <div class="toast-shell pointer-events-auto max-w-sm">
@@ -299,6 +370,7 @@ export class AttendanceListComponent {
 
     void this.store.loadAttendances();
     void this.store.loadSummary();
+    void this.store.loadTodayAttendance();
   }
 
   protected onStatusChange(value: AttendanceStatusFilter): void {
@@ -370,9 +442,14 @@ export class AttendanceListComponent {
   protected reload(): void {
     void this.store.loadAttendances();
     void this.store.loadSummary();
+    void this.store.loadTodayAttendance();
   }
 
   protected reloadSummary(): void {
     void this.store.loadSummary();
+  }
+
+  protected handleTodayAttendanceAction(): void {
+    void this.store.submitTodayAttendanceAction();
   }
 }

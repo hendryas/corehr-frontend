@@ -116,3 +116,12 @@ export interface AttendanceSummary {
   sickToday: number;
   absentToday: number;
 }
+
+export type DailyAttendanceAction = 'check-in' | 'check-out' | 'completed' | 'unavailable';
+
+export interface DailyAttendanceState {
+  action: DailyAttendanceAction;
+  title: string;
+  description: string;
+  actionLabel: string;
+}

@@ -24,10 +24,15 @@ export class LeaveApiService {
       .set('page', query.page)
       .set('limit', query.limit);
 
+    const search = query.search.trim();
     const status = statusFilterToQuery(query.status);
     const leaveType = query.leaveType.trim();
     const startDate = query.startDate.trim();
     const endDate = query.endDate.trim();
+
+    if (search) {
+      params = params.set('search', search);
+    }
 
     if (status) {
       params = params.set('status', status);

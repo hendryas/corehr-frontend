@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AppIconComponent } from '../../../../shared/ui/app-icon/app-icon.component';
 import {
   DepartmentOption,
   EmployeeFormErrors,
@@ -12,7 +13,7 @@ import { EmployeeFormGroup } from './employee-form.utils';
 @Component({
   selector: 'app-employee-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <form class="grid gap-6" [formGroup]="form()" (ngSubmit)="handleSubmit()">
@@ -32,6 +33,17 @@ import { EmployeeFormGroup } from './employee-form.utils';
           <div class="space-y-2">
             <label class="field-label" for="employeeCode">Employee code</label>
             <input id="employeeCode" type="text" class="field-shell" formControlName="employeeCode" placeholder="EMP004" />
+            @if (isEmployeeCodeLoading()) {
+              <p class="text-xs text-ui-muted">Preparing the latest employee code...</p>
+            } @else if (employeeCodeStatusMessage()) {
+              <p
+                class="text-xs"
+                [class.text-ui-muted]="employeeCodeStatusTone() === 'default'"
+                [class.text-warning]="employeeCodeStatusTone() === 'warning'"
+              >
+                {{ employeeCodeStatusMessage() }}
+              </p>
+            }
             @if (errorFor('employeeCode')) {
               <p class="field-error">{{ errorFor('employeeCode') }}</p>
             }
@@ -57,7 +69,28 @@ import { EmployeeFormGroup } from './employee-form.utils';
             <label class="field-label" for="password">
               {{ mode() === 'create' ? 'Password' : 'New password' }}
             </label>
-            <input id="password" type="password" class="field-shell" formControlName="password" placeholder="Minimum 8 characters" />
+
+            <div class="relative">
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="field-shell pr-16"
+                formControlName="password"
+                placeholder="Minimum 8 characters"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-3 inline-flex items-center justify-center rounded-full p-2 text-brand-blue transition hover:bg-brand-blue/8 hover:text-brand-blueDark focus:outline-none"
+                (click)="togglePassword()"
+                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+              >
+                <app-icon
+                  [name]="showPassword() ? 'eye-off' : 'eye'"
+                  iconClass="h-5 w-5"
+                />
+              </button>
+            </div>
+
             <p class="text-xs text-ui-muted">
               {{ mode() === 'create' ? 'Required when creating a new employee.' : 'Leave blank if you do not want to change the password.' }}
             </p>
@@ -206,12 +239,16 @@ export class EmployeeFormComponent {
   readonly departments = input.required<DepartmentOption[]>();
   readonly positions = input.required<PositionOption[]>();
   readonly isReferenceLoading = input(false);
+  readonly isEmployeeCodeLoading = input(false);
+  readonly employeeCodeStatusMessage = input<string | null>(null);
+  readonly employeeCodeStatusTone = input<'default' | 'warning'>('default');
   readonly isSubmitting = input(false);
   readonly submitError = input<string | null>(null);
   readonly fieldErrors = input<EmployeeFormErrors>({});
 
   readonly submitForm = output<void>();
   readonly cancelForm = output<void>();
+  protected readonly showPassword = signal(false);
 
   protected handleSubmit(): void {
     if (this.form().invalid) {
@@ -220,6 +257,10 @@ export class EmployeeFormComponent {
     }
 
     this.submitForm.emit();
+  }
+
+  protected togglePassword(): void {
+    this.showPassword.update((current) => !current);
   }
 
   protected availablePositions(): PositionOption[] {

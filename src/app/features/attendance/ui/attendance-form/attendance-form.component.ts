@@ -65,6 +65,11 @@ import { AttendanceFormGroup } from './attendance-form.utils';
               <option value="leave">Leave</option>
               <option value="absent">Absent</option>
             </select>
+            @if (form().controls.status.value === 'present') {
+              <p class="text-xs text-ui-muted">
+                Present status will be rejected if the employee has approved leave on the selected date.
+              </p>
+            }
             @if (errorFor('status')) {
               <p class="field-error">{{ errorFor('status') }}</p>
             }

@@ -357,6 +357,7 @@ export class LeaveListComponent {
       .pipe(debounceTime(250), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.store.updateSearch(value);
+        void this.store.loadLeaves();
       });
 
     this.leaveTypeControl.valueChanges

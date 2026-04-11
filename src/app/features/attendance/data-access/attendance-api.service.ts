@@ -19,23 +19,20 @@ export class AttendanceApiService {
   private readonly http = inject(HttpClient);
 
   getAttendances(query: AttendanceListQuery): Observable<AttendancesListResponse> {
-    let params = new HttpParams()
-      .set('page', query.page)
-      .set('limit', query.limit);
-
-    const status = statusFilterToQuery(query.status);
-    const attendanceDate = query.attendanceDate.trim();
-
-    if (status) {
-      params = params.set('status', status);
-    }
-
-    if (attendanceDate) {
-      params = params.set('attendance_date', attendanceDate);
-    }
+    const params = this.buildAttendanceListParams(query);
 
     return this.http
       .get<ApiSuccessResponse<AttendancesListResponse>>(`${API_BASE_URL}/attendances`, { params })
+      .pipe(map((response) => response.data));
+  }
+
+  getMyAttendances(query: AttendanceListQuery): Observable<AttendancesListResponse> {
+    const params = this.buildAttendanceListParams(query);
+
+    return this.http
+      .get<ApiSuccessResponse<AttendancesListResponse>>(`${API_BASE_URL}/attendances/me`, {
+        params,
+      })
       .pipe(map((response) => response.data));
   }
 
@@ -84,5 +81,36 @@ export class AttendanceApiService {
     return this.http
       .delete<ApiSuccessResponse<null>>(`${API_BASE_URL}/attendances/${id}`)
       .pipe(map((response) => response.message));
+  }
+
+  checkIn(): Observable<AttendanceApiRecord> {
+    return this.http
+      .post<ApiSuccessResponse<AttendanceApiRecord>>(`${API_BASE_URL}/attendances/check-in`, {})
+      .pipe(map((response) => response.data));
+  }
+
+  checkOut(): Observable<AttendanceApiRecord> {
+    return this.http
+      .post<ApiSuccessResponse<AttendanceApiRecord>>(`${API_BASE_URL}/attendances/check-out`, {})
+      .pipe(map((response) => response.data));
+  }
+
+  private buildAttendanceListParams(query: AttendanceListQuery): HttpParams {
+    let params = new HttpParams()
+      .set('page', query.page)
+      .set('limit', query.limit);
+
+    const status = statusFilterToQuery(query.status);
+    const attendanceDate = query.attendanceDate.trim();
+
+    if (status) {
+      params = params.set('status', status);
+    }
+
+    if (attendanceDate) {
+      params = params.set('attendance_date', attendanceDate);
+    }
+
+    return params;
   }
 }

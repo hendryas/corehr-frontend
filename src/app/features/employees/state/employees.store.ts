@@ -11,6 +11,7 @@ import {
 } from '../domain/mappers/employee.mapper';
 import {
   DepartmentOption,
+  EmployeeApiRecord,
   EmployeeDetail,
   EmployeeFormErrors,
   EmployeeFormMode,
@@ -36,6 +37,10 @@ const initialPagination: EmployeesPagination = {
   totalPages: 0,
 };
 
+const employeeCodePrefix = 'EMP';
+const employeeCodePattern = /^EMP(\d+)$/i;
+const employeeCodePageSize = 100;
+
 @Injectable()
 export class EmployeesStore {
   private readonly employeesApi = inject(EmployeesApiService);
@@ -54,6 +59,9 @@ export class EmployeesStore {
   readonly positions = signal<PositionOption[]>([]);
   readonly isReferenceLoading = signal(false);
   readonly referenceError = signal<string | null>(null);
+  readonly suggestedEmployeeCode = signal('');
+  readonly isEmployeeCodeLoading = signal(false);
+  readonly employeeCodeError = signal<string | null>(null);
 
   readonly isSubmitting = signal(false);
   readonly submitError = signal<string | null>(null);
@@ -146,6 +154,61 @@ export class EmployeesStore {
 
   async createEmployee(value: EmployeeFormValue): Promise<EmployeeDetail | null> {
     return this.submitEmployee('create', null, value);
+  }
+
+  async loadNextEmployeeCode(forceReload = false): Promise<void> {
+    if (!forceReload && this.suggestedEmployeeCode()) {
+      return;
+    }
+
+    this.isEmployeeCodeLoading.set(true);
+    this.employeeCodeError.set(null);
+
+    try {
+      const firstPage = await firstValueFrom(
+        this.employeesApi.getEmployees({
+          search: '',
+          status: 'all',
+          page: 1,
+          limit: employeeCodePageSize,
+        }),
+      );
+
+      const employeeRecords = [...firstPage.items];
+      const remainingPages = Array.from(
+        { length: Math.max(firstPage.pagination.totalPages - 1, 0) },
+        (_, index) => index + 2,
+      );
+
+      if (remainingPages.length > 0) {
+        const pageResponses = await Promise.all(
+          remainingPages.map((page) =>
+            firstValueFrom(
+              this.employeesApi.getEmployees({
+                search: '',
+                status: 'all',
+                page,
+                limit: employeeCodePageSize,
+              }),
+            ),
+          ),
+        );
+
+        employeeRecords.push(...pageResponses.flatMap((response) => response.items));
+      }
+
+      this.suggestedEmployeeCode.set(buildNextEmployeeCode(employeeRecords));
+    } catch (error) {
+      this.suggestedEmployeeCode.set('');
+      this.employeeCodeError.set(
+        getApiErrorMessage(
+          error,
+          'Latest employee code could not be prepared automatically. Please verify it manually.',
+        ),
+      );
+    } finally {
+      this.isEmployeeCodeLoading.set(false);
+    }
   }
 
   async updateEmployee(id: number, value: EmployeeFormValue): Promise<EmployeeDetail | null> {
@@ -264,4 +327,20 @@ export class EmployeesStore {
       this.deleteToastTimeout = null;
     }, 4000);
   }
+}
+
+function buildNextEmployeeCode(employees: EmployeeApiRecord[]): string {
+  const highestNumber = employees.reduce((currentHighest, employee) => {
+    const match = employee.employeeCode.trim().match(employeeCodePattern);
+    const employeeNumber = match ? Number(match[1]) : Number.NaN;
+
+    return Number.isFinite(employeeNumber) && employeeNumber > currentHighest
+      ? employeeNumber
+      : currentHighest;
+  }, 0);
+
+  const nextNumber = highestNumber + 1;
+  const width = Math.max(3, String(nextNumber).length);
+
+  return `${employeeCodePrefix}${String(nextNumber).padStart(width, '0')}`;
 }

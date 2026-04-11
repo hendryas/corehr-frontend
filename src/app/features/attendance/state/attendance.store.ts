@@ -15,6 +15,7 @@ import {
   AttendanceApiRecord,
   AttendanceDetail,
   AttendanceEmployeeOption,
+  DailyAttendanceState,
   AttendanceFormErrors,
   AttendanceFormMode,
   AttendanceFormValue,
@@ -47,6 +48,8 @@ const initialSummary: AttendanceSummary = {
   absentToday: 0,
 };
 
+const todayAttendancePageSize = 20;
+
 @Injectable()
 export class AttendanceStore {
   private readonly attendanceApi = inject(AttendanceApiService);
@@ -61,6 +64,13 @@ export class AttendanceStore {
   readonly summary = signal<AttendanceSummary>(initialSummary);
   readonly isSummaryLoading = signal(false);
   readonly summaryError = signal<string | null>(null);
+
+  private readonly todayAttendanceRecord = signal<AttendanceApiRecord | null>(null);
+  private readonly todayAttendanceBlockedMessage = signal<string | null>(null);
+  readonly isTodayAttendanceLoading = signal(false);
+  readonly todayAttendanceError = signal<string | null>(null);
+  readonly isTodayAttendanceSubmitting = signal(false);
+  readonly todayAttendanceSubmitError = signal<string | null>(null);
 
   private readonly detailRecord = signal<AttendanceApiRecord | null>(null);
   readonly isDetailLoading = signal(false);
@@ -80,7 +90,9 @@ export class AttendanceStore {
 
   private deleteToastTimeout: ReturnType<typeof setTimeout> | null = null;
 
+  readonly authenticatedUser = computed(() => this.authSession.authenticatedUser());
   readonly isAdmin = computed(() => this.authSession.authenticatedUser()?.role === 'admin_hr');
+  readonly todayDate = computed(() => getTodayDateLocal());
 
   private readonly employeeLookup = computed(
     () => new Map(this.employeeOptions().map((employee) => [employee.id, employee] as const)),
@@ -114,6 +126,61 @@ export class AttendanceStore {
   readonly detail = computed<AttendanceDetail | null>(() => {
     const attendance = this.detailRecord();
     return attendance ? mapAttendanceToDetail(attendance, this.employeeLookup()) : null;
+  });
+
+  readonly todayAttendance = computed<AttendanceListItem | null>(() => {
+    const attendance = this.todayAttendanceRecord();
+    return attendance ? mapAttendanceToListItem(attendance, this.employeeLookup()) : null;
+  });
+
+  readonly todayAttendanceState = computed<DailyAttendanceState>(() => {
+    const attendance = this.todayAttendanceRecord();
+    const blockedMessage = this.todayAttendanceBlockedMessage();
+
+    if (blockedMessage) {
+      return {
+        action: 'unavailable',
+        title: 'Check in unavailable',
+        description: blockedMessage,
+        actionLabel: 'Check in unavailable',
+      };
+    }
+
+    if (!attendance) {
+      return {
+        action: 'check-in',
+        title: 'Ready to check in',
+        description: 'No attendance record was found for today. Start your workday by checking in.',
+        actionLabel: 'Check in',
+      };
+    }
+
+    if (attendance.checkIn && !attendance.checkOut) {
+      return {
+        action: 'check-out',
+        title: 'Ready to check out',
+        description:
+          'You already checked in today. Complete today attendance when you are ready to end the session.',
+        actionLabel: 'Check out',
+      };
+    }
+
+    if (attendance.checkOut) {
+      return {
+        action: 'completed',
+        title: 'Attendance completed',
+        description: 'Your attendance for today is complete. No further action is needed.',
+        actionLabel: 'Attendance completed',
+      };
+    }
+
+    return {
+      action: 'unavailable',
+      title: 'Attendance action unavailable',
+      description:
+        'Today attendance already exists with a non-working status. Please contact HR if this needs adjustment.',
+      actionLabel: 'Attendance completed',
+    };
   });
 
   readonly hasAttendances = computed(() => this.filteredAttendances().length > 0);
@@ -214,6 +281,44 @@ export class AttendanceStore {
     }
   }
 
+  async loadTodayAttendance(): Promise<void> {
+    const authenticatedUser = this.authenticatedUser();
+
+    if (!authenticatedUser) {
+      this.todayAttendanceRecord.set(null);
+      this.todayAttendanceBlockedMessage.set(null);
+      this.todayAttendanceError.set('Your session is unavailable. Please sign in again.');
+      return;
+    }
+
+    this.isTodayAttendanceLoading.set(true);
+    this.todayAttendanceBlockedMessage.set(null);
+    this.todayAttendanceError.set(null);
+
+    try {
+      const response = await firstValueFrom(
+        this.attendanceApi.getMyAttendances({
+          search: '',
+          status: 'all',
+          attendanceDate: this.todayDate(),
+          page: 1,
+          limit: todayAttendancePageSize,
+        }),
+      );
+
+      this.todayAttendanceRecord.set(
+        pickLatestAttendanceForUser(response.items, authenticatedUser.id),
+      );
+    } catch (error) {
+      this.todayAttendanceRecord.set(null);
+      this.todayAttendanceError.set(
+        getApiErrorMessage(error, 'Today attendance status could not be loaded right now.'),
+      );
+    } finally {
+      this.isTodayAttendanceLoading.set(false);
+    }
+  }
+
   async loadEmployeeOptions(forceReload = false, showError = true): Promise<void> {
     if (!this.isAdmin()) {
       this.employeeOptions.set([]);
@@ -269,6 +374,52 @@ export class AttendanceStore {
     }
   }
 
+  async submitTodayAttendanceAction(): Promise<boolean> {
+    const authenticatedUser = this.authenticatedUser();
+
+    if (!authenticatedUser) {
+      this.todayAttendanceSubmitError.set('Your session is unavailable. Please sign in again.');
+      return false;
+    }
+
+    const action = this.todayAttendanceState().action;
+
+    if (action === 'completed' || action === 'unavailable') {
+      return false;
+    }
+
+    this.isTodayAttendanceSubmitting.set(true);
+    this.todayAttendanceBlockedMessage.set(null);
+    this.todayAttendanceSubmitError.set(null);
+
+    try {
+      if (action === 'check-in') {
+        await firstValueFrom(this.attendanceApi.checkIn());
+      } else {
+        await firstValueFrom(this.attendanceApi.checkOut());
+      }
+
+      await Promise.allSettled([
+        this.loadTodayAttendance(),
+        this.loadAttendances(),
+        this.loadSummary(),
+      ]);
+
+      return true;
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error, 'Today attendance action could not be completed.');
+      this.todayAttendanceSubmitError.set(errorMessage);
+
+      if (isApprovedLeaveCheckInConflict(errorMessage)) {
+        this.todayAttendanceBlockedMessage.set(errorMessage);
+      }
+
+      return false;
+    } finally {
+      this.isTodayAttendanceSubmitting.set(false);
+    }
+  }
+
   updateSearch(search: string): void {
     this.filters.update((state) => ({
       ...state,
@@ -303,6 +454,10 @@ export class AttendanceStore {
   clearSubmitState(): void {
     this.submitError.set(null);
     this.formErrors.set({});
+  }
+
+  clearTodayAttendanceSubmitError(): void {
+    this.todayAttendanceSubmitError.set(null);
   }
 
   clearDeleteError(): void {
@@ -345,11 +500,19 @@ export class AttendanceStore {
   }
 
   private handleSubmitError(error: unknown): void {
-    this.submitError.set(getApiErrorMessage(error, 'Changes could not be saved.'));
+    const submitError = getApiErrorMessage(error, 'Changes could not be saved.');
+    this.submitError.set(submitError);
 
     if (error instanceof HttpErrorResponse) {
       const apiError = error.error as ApiErrorResponse | undefined;
-      this.formErrors.set(mapValidationErrors(apiError?.errors));
+      const fieldErrors = mapValidationErrors(apiError?.errors);
+
+      if (isApprovedLeavePresentConflict(submitError)) {
+        fieldErrors.status = [submitError];
+        fieldErrors.attendanceDate = [submitError];
+      }
+
+      this.formErrors.set(fieldErrors);
     }
   }
 
@@ -374,4 +537,40 @@ export class AttendanceStore {
       this.deleteToastTimeout = null;
     }, 4000);
   }
+}
+
+function pickLatestAttendanceForUser(
+  attendances: AttendanceApiRecord[],
+  userId: number,
+): AttendanceApiRecord | null {
+  const matchedAttendances = attendances.filter((attendance) => attendance.userId === userId);
+
+  if (matchedAttendances.length === 0) {
+    return null;
+  }
+
+  return matchedAttendances.reduce((latest, current) =>
+    getAttendanceSortValue(current) > getAttendanceSortValue(latest) ? current : latest,
+  );
+}
+
+function getAttendanceSortValue(attendance: AttendanceApiRecord): number {
+  return new Date(attendance.updatedAt || attendance.createdAt).getTime();
+}
+
+function getTodayDateLocal(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function isApprovedLeaveCheckInConflict(message: string): boolean {
+  return message.startsWith('Cannot check in while on approved leave (');
+}
+
+function isApprovedLeavePresentConflict(message: string): boolean {
+  return message.startsWith('Cannot mark attendance as present during approved leave (');
 }
