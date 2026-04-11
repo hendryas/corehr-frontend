@@ -6,6 +6,9 @@ export const attendanceRoutes: Routes = [
   {
     path: '',
     providers: [AttendanceApiService, AttendanceStore],
+    data: {
+      allowedRoles: ['admin_hr', 'employee'],
+    },
     children: [
       {
         path: '',
@@ -24,6 +27,7 @@ export const attendanceRoutes: Routes = [
         path: 'new',
         title: 'Add Attendance | CoreHR',
         data: {
+          allowedRoles: ['admin_hr'],
           eyebrow: 'Attendance Hub',
           title: 'Add attendance',
           description: 'Create a new attendance record and complete the attendance details.',
@@ -37,6 +41,7 @@ export const attendanceRoutes: Routes = [
         path: ':id/edit',
         title: 'Edit Attendance | CoreHR',
         data: {
+          allowedRoles: ['admin_hr'],
           eyebrow: 'Attendance Hub',
           title: 'Edit attendance',
           description: 'Update attendance timing, status, and notes for an existing record.',

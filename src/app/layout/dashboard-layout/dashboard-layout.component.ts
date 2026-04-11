@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { APP_SHELL } from '../../core/constants/app-shell.constants';
-import { DASHBOARD_NAV_ITEMS } from '../../core/constants/navigation.constants';
+import { AuthRoutingService } from '../../core/services/auth-routing.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
 import { PageHeaderComponent } from '../page-header/page-header.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -30,7 +30,7 @@ import { TopbarComponent } from '../topbar/topbar.component';
         [class.translate-x-0]="sidebarOpen()"
       >
         <app-sidebar
-          [items]="navigationItems"
+          [items]="navigationItems()"
           [user]="user()"
           (navigate)="closeSidebar()"
           (signOut)="signOut()"
@@ -40,6 +40,7 @@ import { TopbarComponent } from '../topbar/topbar.component';
       <div class="lg:pl-[18.5rem] xl:pl-[21rem] 2xl:pl-[22.5rem]">
         <app-topbar
           [pageTitle]="pageMeta().title"
+          [homeRoute]="homeRoute()"
           [user]="user()"
           (menuToggle)="toggleSidebar()"
           (signOut)="signOut()"
@@ -62,8 +63,15 @@ export class DashboardLayoutComponent {
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly authSession = inject(AuthSessionService);
+  private readonly authRouting = inject(AuthRoutingService);
 
-  protected readonly navigationItems = DASHBOARD_NAV_ITEMS;
+  protected readonly authenticatedUser = this.authSession.authenticatedUser;
+  protected readonly navigationItems = computed(() =>
+    this.authRouting.getNavigationItems(this.authenticatedUser()?.role),
+  );
+  protected readonly homeRoute = computed(() =>
+    this.authRouting.getDefaultRoute(this.authenticatedUser()?.role),
+  );
   protected readonly user = this.authSession.user;
   protected readonly sidebarOpen = signal(false);
 
@@ -87,9 +95,11 @@ export class DashboardLayoutComponent {
   }
 
   protected signOut(): void {
+    const loginRoute = this.authRouting.getLoginRoute(this.authenticatedUser()?.role);
+
     this.authSession.signOut();
     this.closeSidebar();
-    void this.router.navigateByUrl('/login');
+    void this.router.navigateByUrl(loginRoute);
   }
 
   private resolvePageMeta() {

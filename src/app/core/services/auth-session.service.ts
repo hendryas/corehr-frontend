@@ -8,7 +8,8 @@ import { getInitials } from '../../shared/utils/string.utils';
 
 @Injectable({ providedIn: 'root' })
 export class AuthSessionService {
-  private readonly storageKey = 'corehr.admin.session';
+  private readonly storageKey = 'corehr.session';
+  private readonly legacyStorageKey = 'corehr.admin.session';
   private readonly sessionState = signal<AuthSessionSnapshot | null>(this.restoreSession());
 
   readonly user = computed(() => {
@@ -46,7 +47,8 @@ export class AuthSessionService {
 
   private restoreSession(): AuthSessionSnapshot | null {
     try {
-      const rawSession = localStorage.getItem(this.storageKey);
+      const rawSession =
+        localStorage.getItem(this.storageKey) ?? localStorage.getItem(this.legacyStorageKey);
       return rawSession ? (JSON.parse(rawSession) as AuthSessionSnapshot) : null;
     } catch {
       return null;
@@ -56,6 +58,7 @@ export class AuthSessionService {
   private persistSession(session: AuthSessionSnapshot): void {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(session));
+      localStorage.removeItem(this.legacyStorageKey);
     } catch {
       // Ignore storage failures while persisting the session snapshot.
     }
@@ -64,6 +67,7 @@ export class AuthSessionService {
   private clearSession(): void {
     try {
       localStorage.removeItem(this.storageKey);
+      localStorage.removeItem(this.legacyStorageKey);
     } catch {
       // Ignore storage failures while clearing the session snapshot.
     }

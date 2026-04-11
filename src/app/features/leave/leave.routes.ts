@@ -6,6 +6,9 @@ export const leaveRoutes: Routes = [
   {
     path: '',
     providers: [LeaveApiService, LeaveStore],
+    data: {
+      allowedRoles: ['admin_hr', 'employee'],
+    },
     children: [
       {
         path: '',

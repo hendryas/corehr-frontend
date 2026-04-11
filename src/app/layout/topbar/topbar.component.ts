@@ -68,7 +68,7 @@ import { AppIconComponent } from '../../shared/ui/app-icon/app-icon.component';
                 <p class="mt-1 text-xs text-ui-muted">{{ user()?.email ?? 'admin@corehr.local' }}</p>
               </li>
               <li flowbiteDropdownItem>
-                <a routerLink="/dashboard" class="block w-full text-left text-ui-text">Dashboard home</a>
+                <a [routerLink]="homeRoute()" class="block w-full text-left text-ui-text">Dashboard home</a>
               </li>
               <li flowbiteDropdownItem>
                 <button type="button" class="w-full text-left text-ui-text">Profile settings</button>
@@ -92,6 +92,7 @@ import { AppIconComponent } from '../../shared/ui/app-icon/app-icon.component';
 })
 export class TopbarComponent {
   readonly pageTitle = input('Dashboard overview');
+  readonly homeRoute = input('/dashboard');
   readonly user = input<UserProfile | null>(null);
 
   readonly menuToggle = output<void>();

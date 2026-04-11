@@ -9,6 +9,8 @@ export type AppIconName =
   | 'bell'
   | 'menu'
   | 'logout'
+  | 'eye'
+  | 'eye-off'
   | 'trend'
   | 'sparkles'
   | 'announcement'

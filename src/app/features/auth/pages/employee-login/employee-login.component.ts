@@ -7,27 +7,27 @@ import { createLoginForm } from '../../domain/login-form.utils';
 import { AuthLoginStore } from '../../state/auth-login.store';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-employee-login',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, AppIconComponent],
   providers: [AuthLoginStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="relative flex min-h-screen items-center overflow-hidden px-4 py-10 sm:px-6 lg:px-10">
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(31,111,178,0.14),_transparent_26%),radial-gradient(circle_at_bottom_right,_rgba(217,161,26,0.16),_transparent_22%)]"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(47,125,74,0.12),_transparent_26%),radial-gradient(circle_at_bottom_right,_rgba(31,111,178,0.12),_transparent_24%)]"></div>
 
-      <div class="relative mx-auto grid w-full max-w-6xl overflow-hidden rounded-[36px] border border-ui-border/80 bg-white/70 shadow-[0_40px_90px_-50px_rgba(15,23,42,0.45)] backdrop-blur xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]">
+      <div class="relative mx-auto grid w-full max-w-6xl overflow-hidden rounded-[36px] border border-ui-border/80 bg-white/72 shadow-[0_40px_90px_-50px_rgba(15,23,42,0.45)] backdrop-blur xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]">
         <div class="flex items-center px-6 py-8 sm:px-10 lg:px-12">
           <div class="mx-auto w-full max-w-md">
             <div class="mb-10 space-y-4">
-              <div class="inline-flex items-center gap-3 rounded-full border border-brand-blue/15 bg-brand-blue/8 px-4 py-2">
-                <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-blue text-sm font-bold text-white">
-                  C
+              <div class="inline-flex items-center gap-3 rounded-full border border-brand-green/15 bg-brand-green/8 px-4 py-2">
+                <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-green text-sm font-bold text-white">
+                  E
                 </span>
-                <span class="text-sm font-semibold text-brand-blue">{{ brandName }}</span>
+                <span class="text-sm font-semibold text-brand-green">{{ brandName }}</span>
               </div>
               <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-brand-blue">Admin access</p>
+                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">Employee access</p>
                 <h1 class="mt-3 text-4xl font-bold text-ui-text">Welcome back</h1>
                 <p class="mt-3 muted-copy">{{ subtitle }}</p>
               </div>
@@ -35,27 +35,27 @@ import { AuthLoginStore } from '../../state/auth-login.store';
 
             <form class="space-y-5" [formGroup]="form" (ngSubmit)="submit()">
               <div class="space-y-2">
-                <label for="login-email" class="field-label">Email address</label>
+                <label for="employee-login-email" class="field-label">Work email</label>
                 <input
-                  id="login-email"
+                  id="employee-login-email"
                   type="email"
                   formControlName="email"
-                  placeholder="name@corehr.id"
+                  placeholder="employee@corehr.id"
                   autocomplete="username"
                   inputmode="email"
                   class="auth-input"
                 />
                 @if (form.controls.email.invalid && form.controls.email.touched) {
-                  <p class="text-sm font-medium text-danger">Use a valid work email before continuing.</p>
+                  <p class="text-sm font-medium text-danger">Use your company email to continue.</p>
                 }
               </div>
 
               <div class="space-y-2">
-                <label for="login-password" class="field-label">Password</label>
+                <label for="employee-login-password" class="field-label">Password</label>
 
                 <div class="relative">
                   <input
-                    id="login-password"
+                    id="employee-login-password"
                     [type]="showPassword() ? 'text' : 'password'"
                     formControlName="password"
                     placeholder="Enter your password"
@@ -64,7 +64,7 @@ import { AuthLoginStore } from '../../state/auth-login.store';
                   />
                   <button
                     type="button"
-                    class="absolute inset-y-0 right-3 inline-flex items-center justify-center rounded-full p-2 text-brand-blue transition hover:bg-brand-blue/8 hover:text-brand-blueDark focus:outline-none"
+                    class="absolute inset-y-0 right-3 inline-flex items-center justify-center rounded-full p-2 text-brand-green transition hover:bg-brand-green/8 hover:text-brand-greenDark focus:outline-none"
                     (click)="togglePassword()"
                     [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
                   >
@@ -74,6 +74,7 @@ import { AuthLoginStore } from '../../state/auth-login.store';
                     />
                   </button>
                 </div>
+
                 @if (form.controls.password.invalid && form.controls.password.touched) {
                   <p class="text-sm font-medium text-danger">Password must contain at least 8 characters.</p>
                 }
@@ -84,7 +85,7 @@ import { AuthLoginStore } from '../../state/auth-login.store';
                 class="btn-primary w-full justify-center !py-3"
                 [disabled]="form.invalid || store.isSubmitting()"
               >
-                {{ store.isSubmitting() ? 'Signing in...' : 'Sign in to dashboard' }}
+                {{ store.isSubmitting() ? 'Signing in...' : 'Sign in to employee workspace' }}
               </button>
 
               @if (store.errorMessage()) {
@@ -96,63 +97,60 @@ import { AuthLoginStore } from '../../state/auth-login.store';
 
             <div class="mt-6 rounded-[24px] border border-ui-border bg-ui-surface/80 px-4 py-4">
               <p class="text-sm text-ui-muted">
-                Need employee access?
-                <a
-                  routerLink="/employee-login"
-                  class="font-semibold text-brand-blue transition hover:text-brand-blueDark"
-                >
-                  Sign in through the employee portal
+                Need admin access?
+                <a routerLink="/login" class="font-semibold text-brand-blue transition hover:text-brand-blueDark">
+                  Sign in through the admin portal
                 </a>
               </p>
             </div>
 
             <div class="mt-8 grid gap-4 rounded-[28px] border border-ui-border bg-ui-surface p-5 sm:grid-cols-3">
               <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Role</p>
-                <p class="mt-2 text-sm font-semibold text-ui-text">admin_hr</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Portal</p>
+                <p class="mt-2 text-sm font-semibold text-ui-text">Employee workspace</p>
               </div>
               <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Mode</p>
-                <p class="mt-2 text-sm font-semibold text-ui-text">Live API</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Focus</p>
+                <p class="mt-2 text-sm font-semibold text-ui-text">Attendance & leave</p>
               </div>
               <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Next</p>
-                <p class="mt-2 text-sm font-semibold text-ui-text">Dashboard sync</p>
+                <p class="mt-2 text-sm font-semibold text-ui-text">Self-service actions</p>
               </div>
             </div>
           </div>
         </div>
 
         <div class="relative hidden overflow-hidden border-l border-ui-border/80 bg-slate-950 px-10 py-12 text-white xl:flex">
-          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(31,111,178,0.35),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(217,161,26,0.22),_transparent_28%)]"></div>
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(47,125,74,0.26),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(31,111,178,0.22),_transparent_30%)]"></div>
           <div class="relative flex w-full flex-col justify-between">
             <div class="space-y-6">
-              <p class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">CoreHR foundation</p>
+              <p class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">CoreHR employee</p>
               <h2 class="max-w-md text-4xl font-bold leading-tight">
-                A clean enterprise shell for HR modules, reports, and admin operations.
+                A personal workspace for leave requests, attendance visibility, and daily HR updates.
               </h2>
               <p class="max-w-lg text-base leading-7 text-slate-300">
-                This first phase focuses on brand-consistent UI, scalable Angular structure, and reusable dashboard building blocks.
+                Keep the same CoreHR experience while giving employees a focused entry point into the tools they need most.
               </p>
             </div>
 
             <div class="grid gap-4">
               <div class="rounded-[28px] border border-white/10 bg-white/6 p-6">
-                <p class="text-sm font-semibold text-brand-gold">Starter status</p>
-                <p class="mt-3 text-2xl font-bold">Angular + Tailwind + Flowbite Angular</p>
+                <p class="text-sm font-semibold text-brand-gold">Employee workspace</p>
+                <p class="mt-3 text-2xl font-bold">Leave, attendance, and personal HR visibility</p>
                 <p class="mt-3 text-sm leading-6 text-slate-300">
-                  Layout system, responsive navigation, dummy dashboard widgets, and auth shell are ready.
+                  Employees can review records, submit requests, and stay aligned with the same CoreHR system used by HR admins.
                 </p>
               </div>
 
               <div class="grid gap-4 sm:grid-cols-2">
                 <div class="rounded-[24px] border border-white/10 bg-white/6 p-5">
-                  <p class="text-sm font-semibold text-white">Brand blue</p>
-                  <div class="mt-4 h-16 rounded-2xl bg-brand-blue"></div>
+                  <p class="text-sm font-semibold text-white">Workspace green</p>
+                  <div class="mt-4 h-16 rounded-2xl bg-brand-green"></div>
                 </div>
                 <div class="rounded-[24px] border border-white/10 bg-white/6 p-5">
-                  <p class="text-sm font-semibold text-white">Accent gold</p>
-                  <div class="mt-4 h-16 rounded-2xl bg-brand-gold"></div>
+                  <p class="text-sm font-semibold text-white">Foundation blue</p>
+                  <div class="mt-4 h-16 rounded-2xl bg-brand-blue"></div>
                 </div>
               </div>
             </div>
@@ -162,10 +160,11 @@ import { AuthLoginStore } from '../../state/auth-login.store';
     </section>
   `,
 })
-export class LoginComponent {
+export class EmployeeLoginComponent {
   protected readonly store = inject(AuthLoginStore);
   protected readonly brandName = APP_SHELL.brandName;
-  protected readonly subtitle = APP_SHELL.loginSubtitle;
+  protected readonly subtitle =
+    'Access your attendance records, leave requests, and personal HR updates in one secure workspace.';
   protected readonly form = createLoginForm();
   protected readonly showPassword = signal(false);
 
@@ -176,8 +175,9 @@ export class LoginComponent {
     }
 
     void this.store.signIn(this.form.getRawValue(), {
-      expectedRole: 'admin_hr',
-      roleMismatchMessage: 'Dashboard admin hanya bisa diakses oleh akun admin_hr.',
+      expectedRole: 'employee',
+      roleMismatchMessage:
+        'Akun admin tidak bisa digunakan di Employee Login. Silakan masuk melalui halaman admin.',
     });
   }
 

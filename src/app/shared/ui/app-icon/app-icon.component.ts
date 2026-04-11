@@ -61,6 +61,20 @@ import { AppIconName } from '../../types/app-icon-name.type';
           <path d="M10 17 15 12 10 7M15 12H4M20 4v16" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       }
+      @case ('eye') {
+        <svg [class]="iconClass()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      }
+      @case ('eye-off') {
+        <svg [class]="iconClass()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M3 3 21 21" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M10.6 10.7A3 3 0 0 0 13.3 13.4" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M9.9 5.1A11 11 0 0 1 12 5c6 0 9.5 7 9.5 7a15.6 15.6 0 0 1-4 4.8" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M6.2 6.3A15.3 15.3 0 0 0 2.5 12s3.5 7 9.5 7a10.7 10.7 0 0 0 3-.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      }
       @case ('trend') {
         <svg [class]="iconClass()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
           <path d="m4 15 5-5 4 4 7-7M15 7h5v5" stroke-linecap="round" stroke-linejoin="round" />

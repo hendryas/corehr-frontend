@@ -20,6 +20,15 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/auth/pages/login/login.component').then((m) => m.LoginComponent),
       },
+      {
+        path: 'employee-login',
+        canActivate: [guestGuard],
+        title: 'Employee Login | CoreHR',
+        loadComponent: () =>
+          import('./features/auth/pages/employee-login/employee-login.component').then(
+            (m) => m.EmployeeLoginComponent,
+          ),
+      },
     ],
   },
   {
@@ -34,6 +43,7 @@ export const routes: Routes = [
         path: 'dashboard',
         title: 'Dashboard | CoreHR',
         data: {
+          allowedRoles: ['admin_hr'],
           eyebrow: 'CoreHR CMS',
           title: 'Dashboard overview',
           description:
@@ -46,20 +56,32 @@ export const routes: Routes = [
       },
       {
         path: 'employees',
+        data: {
+          allowedRoles: ['admin_hr'],
+        },
         loadChildren: () =>
           import('./features/employees/employees.routes').then((m) => m.employeeRoutes),
       },
       {
         path: 'attendance',
+        data: {
+          allowedRoles: ['admin_hr', 'employee'],
+        },
         loadChildren: () =>
           import('./features/attendance/attendance.routes').then((m) => m.attendanceRoutes),
       },
       {
         path: 'leave',
+        data: {
+          allowedRoles: ['admin_hr', 'employee'],
+        },
         loadChildren: () => import('./features/leave/leave.routes').then((m) => m.leaveRoutes),
       },
       {
         path: 'organization',
+        data: {
+          allowedRoles: ['admin_hr'],
+        },
         loadChildren: () =>
           import('./features/organization/organization.routes').then(
             (m) => m.organizationRoutes,
