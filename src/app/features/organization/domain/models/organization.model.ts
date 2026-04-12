@@ -25,6 +25,10 @@ export interface PositionListFilters {
   departmentId: number | 'all';
 }
 
+export interface LeaveTypeListFilters {
+  search: string;
+}
+
 export interface DepartmentListItem {
   id: number;
   name: string;

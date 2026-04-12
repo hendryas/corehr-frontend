@@ -11,7 +11,9 @@ export interface LeaveApiRecord {
   userId: number;
   employeeCode: string;
   fullName: string;
-  leaveType: string;
+  leaveTypeId: number;
+  leaveTypeCode: string;
+  leaveTypeName: string;
   startDate: string;
   endDate: string;
   reason: string;
@@ -39,7 +41,7 @@ export interface LeavesListResponse {
 export interface LeaveListQuery {
   search: string;
   status: LeaveRequestStatusFilter;
-  leaveType: string;
+  leaveTypeId: number | null;
   startDate: string;
   endDate: string;
   page: number;
@@ -67,7 +69,9 @@ export interface LeaveListItem {
   fullName: string;
   departmentName: string;
   positionName: string;
-  leaveType: string;
+  leaveTypeId: number;
+  leaveTypeCode: string;
+  leaveTypeName: string;
   requestDate: string;
   requestDateLabel: string;
   startDate: string;
@@ -98,7 +102,7 @@ export interface LeaveDetail extends LeaveListItem {
 
 export interface LeaveFormValue {
   userId: number | null;
-  leaveType: string;
+  leaveTypeId: number | null;
   startDate: string;
   endDate: string;
   reason: string;
@@ -110,7 +114,7 @@ export type LeaveFormErrors = Partial<Record<LeaveFormField, string[]>>;
 
 export interface LeaveUpsertRequest {
   user_id?: number;
-  leave_type: string;
+  leave_type_id: number;
   start_date: string;
   end_date: string;
   reason: string;

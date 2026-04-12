@@ -5,6 +5,7 @@ import { filter, map, startWith } from 'rxjs';
 import { APP_SHELL } from '../../core/constants/app-shell.constants';
 import { AuthRoutingService } from '../../core/services/auth-routing.service';
 import { AuthSessionService } from '../../core/services/auth-session.service';
+import { NotificationsStoreService } from '../../core/services/notifications-store.service';
 import { PageHeaderComponent } from '../page-header/page-header.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
@@ -42,8 +43,17 @@ import { TopbarComponent } from '../topbar/topbar.component';
           [pageTitle]="pageMeta().title"
           [homeRoute]="homeRoute()"
           [user]="user()"
+          [notifications]="notifications()"
+          [unreadCount]="unreadCount()"
+          [notificationsLoading]="notificationsLoading()"
+          [notificationsError]="notificationsError()"
+          [isMarkingAllAsRead]="isMarkingAllAsRead()"
+          [activeNotificationId]="activeNotificationId()"
           (menuToggle)="toggleSidebar()"
           (signOut)="signOut()"
+          (notificationSelected)="openNotification($event)"
+          (notificationsRetry)="reloadNotifications()"
+          (notificationsMarkAllAsRead)="markAllNotificationsAsRead()"
         />
 
         <main class="px-4 pb-8 pt-5 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
@@ -64,6 +74,7 @@ export class DashboardLayoutComponent {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly authSession = inject(AuthSessionService);
   private readonly authRouting = inject(AuthRoutingService);
+  private readonly notificationsStore = inject(NotificationsStoreService);
 
   protected readonly authenticatedUser = this.authSession.authenticatedUser;
   protected readonly navigationItems = computed(() =>
@@ -73,6 +84,12 @@ export class DashboardLayoutComponent {
     this.authRouting.getDefaultRoute(this.authenticatedUser()?.role),
   );
   protected readonly user = this.authSession.user;
+  protected readonly notifications = this.notificationsStore.notifications;
+  protected readonly unreadCount = this.notificationsStore.unreadCount;
+  protected readonly notificationsLoading = this.notificationsStore.loading;
+  protected readonly notificationsError = this.notificationsStore.error;
+  protected readonly isMarkingAllAsRead = this.notificationsStore.isMarkingAllAsRead;
+  protected readonly activeNotificationId = this.notificationsStore.activeNotificationId;
   protected readonly sidebarOpen = signal(false);
 
   private readonly routeSnapshot = toSignal(
@@ -100,6 +117,19 @@ export class DashboardLayoutComponent {
     this.authSession.signOut();
     this.closeSidebar();
     void this.router.navigateByUrl(loginRoute);
+  }
+
+  protected openNotification(notification: Parameters<NotificationsStoreService['openNotification']>[0]): void {
+    void this.notificationsStore.openNotification(notification);
+  }
+
+  protected reloadNotifications(): void {
+    this.notificationsStore.clearError();
+    void this.notificationsStore.loadNotifications();
+  }
+
+  protected markAllNotificationsAsRead(): void {
+    void this.notificationsStore.markAllAsRead();
   }
 
   private resolvePageMeta() {

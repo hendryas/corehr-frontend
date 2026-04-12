@@ -76,6 +76,27 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
         </div>
       }
 
+      @if (store.exportError()) {
+        <div class="rounded-[24px] border border-warning/20 bg-warning/5 px-5 py-4">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-sm font-semibold text-warning">{{ store.exportError() }}</p>
+            <button type="button" class="btn-secondary" (click)="store.clearExportError()">Dismiss</button>
+          </div>
+        </div>
+      }
+
+      @if (store.leaveTypesError()) {
+        <div class="rounded-[24px] border border-warning/20 bg-warning/5 px-5 py-4">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm font-semibold text-ui-text">Leave type filter is temporarily unavailable</p>
+              <p class="mt-1 text-sm text-ui-muted">{{ store.leaveTypesError() }}</p>
+            </div>
+            <button type="button" class="btn-secondary" (click)="reloadLeaveTypes()">Retry</button>
+          </div>
+        </div>
+      }
+
       @if (store.summaryError()) {
         <div class="rounded-[24px] border border-warning/20 bg-warning/5 px-5 py-4">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -104,7 +125,7 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
       </div>
 
       <div class="surface-card p-6">
-        <div class="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_220px_220px_190px_190px_auto] 2xl:items-end">
+        <div class="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_220px_220px_190px_190px_auto_auto] 2xl:items-end">
           <label class="space-y-2">
             <span class="field-label">Search requests</span>
             <span class="relative block">
@@ -132,20 +153,17 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
 
           <label class="space-y-2">
             <span class="field-label">Leave type</span>
-            <input
-              type="text"
+            <select
               class="field-shell"
-              [formControl]="leaveTypeControl"
-              placeholder="Annual Leave"
-              [attr.list]="store.availableLeaveTypes().length ? 'leave-filter-types' : null"
-            />
-            @if (store.availableLeaveTypes().length) {
-              <datalist id="leave-filter-types">
-                @for (leaveType of store.availableLeaveTypes(); track leaveType) {
-                  <option [value]="leaveType"></option>
-                }
-              </datalist>
-            }
+              [value]="selectedLeaveTypeValue()"
+              [disabled]="store.isLeaveTypesLoading() || !!store.leaveTypesError()"
+              (change)="onLeaveTypeChange($event)"
+            >
+              <option value="">All leave types</option>
+              @for (leaveType of store.leaveTypes(); track leaveType.id) {
+                <option [value]="leaveType.id">{{ leaveType.name }}</option>
+              }
+            </select>
           </label>
 
           <label class="space-y-2">
@@ -167,6 +185,18 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
               (change)="onEndDateChange($any($event.target).value)"
             />
           </label>
+
+          @if (store.isAdmin()) {
+            <button
+              type="button"
+              class="btn-secondary justify-center 2xl:min-w-44"
+              [disabled]="store.isExportingCsv()"
+              (click)="exportCsv()"
+            >
+              <app-icon name="download" iconClass="h-4 w-4" />
+              {{ store.isExportingCsv() ? 'Exporting...' : 'Export CSV' }}
+            </button>
+          }
 
           <button type="button" class="btn-primary justify-center 2xl:min-w-44" (click)="openCreate()">
             Add leave request
@@ -244,7 +274,7 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
               <div class="rounded-[22px] border border-ui-border bg-ui-bg/70 px-4 py-4">
                 <p class="text-sm font-semibold text-ui-text">{{ pendingLeave()?.fullName }}</p>
                 <p class="mt-1 text-sm text-ui-muted">
-                  {{ pendingLeave()?.leaveType }} · {{ pendingLeave()?.startDateLabel }} to {{ pendingLeave()?.endDateLabel }}
+                  {{ pendingLeave()?.leaveTypeName }} · {{ pendingLeave()?.startDateLabel }} to {{ pendingLeave()?.endDateLabel }}
                 </p>
               </div>
 
@@ -312,9 +342,6 @@ export class LeaveListComponent {
   protected readonly searchControl = new FormControl(this.store.filters().search, {
     nonNullable: true,
   });
-  protected readonly leaveTypeControl = new FormControl(this.store.filters().leaveType, {
-    nonNullable: true,
-  });
 
   protected readonly summaryCards = computed(() => {
     const summary = this.store.summary();
@@ -360,15 +387,15 @@ export class LeaveListComponent {
         void this.store.loadLeaves();
       });
 
-    this.leaveTypeControl.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => {
-        this.store.updateLeaveType(value);
-        void this.store.loadLeaves();
-      });
+    void Promise.allSettled([
+      this.store.loadLeaveTypes(),
+      this.store.loadLeaves(),
+      this.store.loadSummary(),
+    ]);
+  }
 
-    void this.store.loadLeaves();
-    void this.store.loadSummary();
+  protected selectedLeaveTypeValue(): string {
+    return this.store.filters().leaveTypeId ? String(this.store.filters().leaveTypeId) : '';
   }
 
   protected onStatusChange(value: LeaveRequestStatusFilter): void {
@@ -380,6 +407,12 @@ export class LeaveListComponent {
   protected onStartDateChange(value: string): void {
     this.navigationError.set(null);
     this.store.updateStartDate(value);
+    void this.store.loadLeaves();
+  }
+
+  protected onLeaveTypeChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.store.updateLeaveType(value ? Number(value) : null);
     void this.store.loadLeaves();
   }
 
@@ -530,6 +563,14 @@ export class LeaveListComponent {
 
   protected reloadSummary(): void {
     void this.store.loadSummary();
+  }
+
+  protected reloadLeaveTypes(): void {
+    void this.store.loadLeaveTypes(true);
+  }
+
+  protected exportCsv(): void {
+    void this.store.exportLeavesCsv();
   }
 
   private openActionDialog(leave: LeaveListItem, action: Exclude<LeaveActionType, null>): void {

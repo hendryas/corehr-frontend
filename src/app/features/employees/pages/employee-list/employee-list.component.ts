@@ -71,8 +71,17 @@ import { EmployeesTableComponent } from '../../ui/employees-table/employees-tabl
         </div>
       }
 
+      @if (store.exportError()) {
+        <div class="rounded-[24px] border border-warning/20 bg-warning/5 px-5 py-4">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-sm font-semibold text-warning">{{ store.exportError() }}</p>
+            <button type="button" class="btn-secondary" (click)="store.clearExportError()">Dismiss</button>
+          </div>
+        </div>
+      }
+
       <div class="surface-card p-6">
-        <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_220px_auto] xl:items-end">
+        <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_220px_auto_auto] xl:items-end">
           <label class="space-y-2">
             <span class="field-label">Search employees</span>
             <span class="relative block">
@@ -96,6 +105,16 @@ import { EmployeesTableComponent } from '../../ui/employees-table/employees-tabl
               <option value="inactive">Inactive only</option>
             </select>
           </label>
+
+          <button
+            type="button"
+            class="btn-secondary justify-center xl:min-w-44"
+            [disabled]="store.isExportingCsv()"
+            (click)="exportCsv()"
+          >
+            <app-icon name="download" iconClass="h-4 w-4" />
+            {{ store.isExportingCsv() ? 'Exporting...' : 'Export CSV' }}
+          </button>
 
           <button type="button" class="btn-primary justify-center xl:min-w-44" (click)="openCreate()">
             Add employee
@@ -280,5 +299,9 @@ export class EmployeeListComponent {
 
   protected reload(): void {
     void this.store.loadEmployees();
+  }
+
+  protected exportCsv(): void {
+    void this.store.exportEmployeesCsv();
   }
 }

@@ -143,6 +143,15 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
         </div>
       }
 
+      @if (store.exportError()) {
+        <div class="rounded-[24px] border border-warning/20 bg-warning/5 px-5 py-4">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-sm font-semibold text-warning">{{ store.exportError() }}</p>
+            <button type="button" class="btn-secondary" (click)="store.clearExportError()">Dismiss</button>
+          </div>
+        </div>
+      }
+
       @if (store.summaryError()) {
         <div class="rounded-[24px] border border-warning/20 bg-warning/5 px-5 py-4">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -171,7 +180,7 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
       </div>
 
       <div class="surface-card p-6">
-        <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_220px_220px_auto] xl:items-end">
+        <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_220px_220px_auto_auto] xl:items-end">
           <label class="space-y-2">
             <span class="field-label">Search attendance</span>
             <span class="relative block">
@@ -207,6 +216,18 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
               (change)="onDateChange($any($event.target).value)"
             />
           </label>
+
+          @if (store.isAdmin()) {
+            <button
+              type="button"
+              class="btn-secondary justify-center xl:min-w-44"
+              [disabled]="store.isExportingCsv()"
+              (click)="exportCsv()"
+            >
+              <app-icon name="download" iconClass="h-4 w-4" />
+              {{ store.isExportingCsv() ? 'Exporting...' : 'Export CSV' }}
+            </button>
+          }
 
           @if (store.isAdmin()) {
             <button type="button" class="btn-primary justify-center xl:min-w-44" (click)="openCreate()">
@@ -451,5 +472,9 @@ export class AttendanceListComponent {
 
   protected handleTodayAttendanceAction(): void {
     void this.store.submitTodayAttendanceAction();
+  }
+
+  protected exportCsv(): void {
+    void this.store.exportAttendancesCsv();
   }
 }

@@ -32,7 +32,7 @@ const fallbackText = 'Not provided';
 
 const validationFieldMap: Record<string, keyof LeaveFormValue> = {
   user_id: 'userId',
-  leave_type: 'leaveType',
+  leave_type_id: 'leaveTypeId',
   start_date: 'startDate',
   end_date: 'endDate',
   reason: 'reason',
@@ -65,7 +65,9 @@ export function mapLeaveToListItem(
     fullName: leave.fullName,
     departmentName: employee?.departmentName ?? 'Not assigned',
     positionName: employee?.positionName ?? 'Not assigned',
-    leaveType: leave.leaveType,
+    leaveTypeId: leave.leaveTypeId,
+    leaveTypeCode: leave.leaveTypeCode,
+    leaveTypeName: leave.leaveTypeName,
     requestDate: leave.createdAt,
     requestDateLabel: formatDateTime(leave.createdAt),
     startDate: leave.startDate,
@@ -106,7 +108,7 @@ export function mapLeaveToDetail(
 export function mapLeaveToFormValue(leave: LeaveApiRecord): LeaveFormValue {
   return {
     userId: leave.userId,
-    leaveType: leave.leaveType,
+    leaveTypeId: leave.leaveTypeId,
     startDate: leave.startDate,
     endDate: leave.endDate,
     reason: leave.reason,
@@ -118,7 +120,7 @@ export function mapLeaveFormToRequest(
   isAdmin: boolean,
 ): LeaveUpsertRequest {
   const payload: LeaveUpsertRequest = {
-    leave_type: value.leaveType.trim(),
+    leave_type_id: Number(value.leaveTypeId),
     start_date: value.startDate,
     end_date: value.endDate,
     reason: value.reason.trim(),

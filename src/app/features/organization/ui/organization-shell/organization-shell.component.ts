@@ -40,6 +40,13 @@ import { OrganizationStore } from '../../state/organization.store';
           >
             Positions
           </a>
+          <a
+            routerLink="/organization/leave-types"
+            routerLinkActive="bg-brand-blue text-white shadow-[0_18px_35px_-26px_rgba(31,111,178,0.65)]"
+            class="rounded-2xl px-4 py-3 text-sm font-semibold text-ui-muted transition hover:bg-brand-blue/8 hover:text-brand-blue"
+          >
+            Leave types
+          </a>
         </nav>
       </section>
 

@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiErrorResponse } from '../../../core/models/api.model';
+import { downloadFile } from '../../../shared/utils/file.utils';
 import {
   getApiErrorMessage,
   mapEmployeeFormToRequest,
@@ -70,6 +71,8 @@ export class EmployeesStore {
   readonly deletingEmployeeId = signal<number | null>(null);
   readonly deleteError = signal<string | null>(null);
   readonly deleteSuccessMessage = signal<string | null>(null);
+  readonly isExportingCsv = signal(false);
+  readonly exportError = signal<string | null>(null);
 
   private deleteToastTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -234,6 +237,24 @@ export class EmployeesStore {
     }
   }
 
+  async exportEmployeesCsv(): Promise<boolean> {
+    this.isExportingCsv.set(true);
+    this.exportError.set(null);
+
+    try {
+      const download = await firstValueFrom(this.employeesApi.exportEmployeesCsv(this.filters()));
+      downloadFile(download);
+      return true;
+    } catch (error) {
+      this.exportError.set(
+        getApiErrorMessage(error, 'Employee CSV could not be exported right now. Please try again.'),
+      );
+      return false;
+    } finally {
+      this.isExportingCsv.set(false);
+    }
+  }
+
   updateSearch(search: string): void {
     this.filters.update((state) => ({
       ...state,
@@ -264,6 +285,10 @@ export class EmployeesStore {
 
   clearDeleteError(): void {
     this.deleteError.set(null);
+  }
+
+  clearExportError(): void {
+    this.exportError.set(null);
   }
 
   clearDeleteSuccessMessage(): void {

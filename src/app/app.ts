@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { EMPTY, catchError } from 'rxjs';
 import { AuthApiService } from './core/services/auth-api.service';
 import { AuthSessionService } from './core/services/auth-session.service';
+import { NotificationsStoreService } from './core/services/notifications-store.service';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +14,11 @@ import { AuthSessionService } from './core/services/auth-session.service';
 export class App {
   private readonly authApi = inject(AuthApiService);
   private readonly authSession = inject(AuthSessionService);
+  private readonly notificationsStore = inject(NotificationsStoreService);
 
   constructor() {
+    this.notificationsStore;
+
     if (!this.authSession.getAccessToken()) {
       return;
     }

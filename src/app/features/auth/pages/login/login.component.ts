@@ -1,7 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { APP_SHELL } from '../../../../core/constants/app-shell.constants';
+import {
+  SESSION_TIMEOUT_REASON,
+  SESSION_TIMEOUT_REASON_QUERY_PARAM,
+} from '../../../../core/constants/auth.constants';
 import { AppIconComponent } from '../../../../shared/ui/app-icon/app-icon.component';
 import { createLoginForm } from '../../domain/login-form.utils';
 import { AuthLoginStore } from '../../state/auth-login.store';
@@ -32,6 +37,12 @@ import { AuthLoginStore } from '../../state/auth-login.store';
                 <p class="mt-3 muted-copy">{{ subtitle }}</p>
               </div>
             </div>
+
+            @if (sessionTimeoutMessage()) {
+              <div class="mb-6 rounded-2xl border border-brand-blue/20 bg-brand-blue/6 px-4 py-3 text-sm font-medium text-brand-blueDark">
+                {{ sessionTimeoutMessage() }}
+              </div>
+            }
 
             <form class="space-y-5" [formGroup]="form" (ngSubmit)="submit()">
               <div class="space-y-2">
@@ -163,11 +174,21 @@ import { AuthLoginStore } from '../../state/auth-login.store';
   `,
 })
 export class LoginComponent {
+  private readonly activatedRoute = inject(ActivatedRoute);
+
   protected readonly store = inject(AuthLoginStore);
   protected readonly brandName = APP_SHELL.brandName;
   protected readonly subtitle = APP_SHELL.loginSubtitle;
   protected readonly form = createLoginForm();
   protected readonly showPassword = signal(false);
+  private readonly queryParamMap = toSignal(this.activatedRoute.queryParamMap, {
+    initialValue: this.activatedRoute.snapshot.queryParamMap,
+  });
+  protected readonly sessionTimeoutMessage = computed(() =>
+    this.queryParamMap().get(SESSION_TIMEOUT_REASON_QUERY_PARAM) === SESSION_TIMEOUT_REASON
+      ? 'Sesi Anda berakhir karena tidak ada aktivitas selama 15 menit. Silakan login kembali.'
+      : null,
+  );
 
   protected submit(): void {
     if (this.form.invalid) {

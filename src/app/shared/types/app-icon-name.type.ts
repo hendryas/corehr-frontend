@@ -15,4 +15,5 @@ export type AppIconName =
   | 'sparkles'
   | 'announcement'
   | 'upload'
+  | 'download'
   | 'briefcase';

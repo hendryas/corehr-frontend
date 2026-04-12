@@ -5,6 +5,7 @@ import { LeaveFormComponent } from '../../ui/leave-form/leave-form.component';
 import {
   buildLeaveForm,
   getLeaveFormValue,
+  syncLeaveTypeAvailability,
 } from '../../ui/leave-form/leave-form.utils';
 
 @Component({
@@ -17,7 +18,7 @@ import {
       @if (store.referenceError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Employee options are unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Reference data is unavailable</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.referenceError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -41,10 +42,12 @@ import {
         [form]="form"
         [mode]="'create'"
         [employeeOptions]="store.employeeOptions()"
-        [leaveTypeOptions]="store.availableLeaveTypes()"
+        [leaveTypes]="store.leaveTypes()"
         [showEmployeeField]="store.isAdmin()"
         [selectedEmployeeLabel]="selectedEmployeeLabel()"
+        [leaveTypeMessage]="leaveTypeMessage()"
         [isReferenceLoading]="store.isReferenceLoading()"
+        [disableSubmit]="isSubmitDisabled()"
         [isSubmitting]="store.isSubmitting()"
         [submitError]="store.submitError()"
         [fieldErrors]="store.formErrors()"
@@ -68,6 +71,17 @@ export class LeaveCreateComponent {
 
     return `${employee.fullName} - ${employee.employeeCode}`;
   });
+  protected readonly leaveTypeMessage = computed(() =>
+    this.store.leaveTypesError()
+      ? 'Leave types could not be loaded yet. Please retry before submitting.'
+      : null,
+  );
+  protected readonly isSubmitDisabled = computed(
+    () =>
+      !this.store.hasLeaveTypes() ||
+      !!this.store.referenceError() ||
+      (this.store.isAdmin() && this.store.employeeOptions().length === 0),
+  );
 
   constructor() {
     void this.reload();
@@ -86,8 +100,9 @@ export class LeaveCreateComponent {
   }
 
   protected async reload(): Promise<void> {
-    await this.store.loadEmployeeOptions(true);
+    await this.store.loadReferenceData(true);
     this.prefillEmployee();
+    syncLeaveTypeAvailability(this.form, this.store.leaveTypes());
   }
 
   private prefillEmployee(): void {

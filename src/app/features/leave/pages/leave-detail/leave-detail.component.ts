@@ -111,7 +111,7 @@ import { LeaveStatusBadgeComponent } from '../../ui/leave-status-badge/leave-sta
                 <div>
                   <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ui-muted">{{ leave.employeeCode }}</p>
                   <h2 class="mt-2 text-3xl font-bold text-ui-text">{{ leave.fullName }}</h2>
-                  <p class="mt-2 text-sm text-ui-muted">{{ leave.leaveType }} · {{ leave.totalDaysLabel }}</p>
+                  <p class="mt-2 text-sm text-ui-muted">{{ leave.leaveTypeName }} · {{ leave.totalDaysLabel }}</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
                   <app-leave-status-badge [status]="leave.status" />
@@ -171,7 +171,7 @@ import { LeaveStatusBadgeComponent } from '../../ui/leave-status-badge/leave-sta
                 <div class="rounded-[22px] border border-ui-border bg-ui-bg/70 px-4 py-4">
                   <p class="text-sm font-semibold text-ui-text">{{ leave.fullName }}</p>
                   <p class="mt-1 text-sm text-ui-muted">
-                    {{ leave.leaveType }} · {{ leave.startDateLabel }} to {{ leave.endDateLabel }}
+                    {{ leave.leaveTypeName }} · {{ leave.startDateLabel }} to {{ leave.endDateLabel }}
                   </p>
                 </div>
 
@@ -252,7 +252,7 @@ export class LeaveDetailComponent {
     }
 
     return [
-      { label: 'Leave type', value: leave.leaveType },
+      { label: 'Leave type', value: leave.leaveTypeName },
       { label: 'Request date', value: leave.requestDateLabel },
       { label: 'Start date', value: leave.startDateLabel },
       { label: 'End date', value: leave.endDateLabel },

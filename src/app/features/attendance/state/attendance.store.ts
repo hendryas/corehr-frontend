@@ -3,6 +3,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiErrorResponse } from '../../../core/models/api.model';
 import { AuthSessionService } from '../../../core/services/auth-session.service';
+import { downloadFile } from '../../../shared/utils/file.utils';
 import { AttendanceApiService } from '../data-access/attendance-api.service';
 import {
   getApiErrorMessage,
@@ -87,6 +88,8 @@ export class AttendanceStore {
   readonly deletingAttendanceId = signal<number | null>(null);
   readonly deleteError = signal<string | null>(null);
   readonly deleteSuccessMessage = signal<string | null>(null);
+  readonly isExportingCsv = signal(false);
+  readonly exportError = signal<string | null>(null);
 
   private deleteToastTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -374,6 +377,27 @@ export class AttendanceStore {
     }
   }
 
+  async exportAttendancesCsv(): Promise<boolean> {
+    this.isExportingCsv.set(true);
+    this.exportError.set(null);
+
+    try {
+      const download = await firstValueFrom(this.attendanceApi.exportAttendancesCsv(this.filters()));
+      downloadFile(download);
+      return true;
+    } catch (error) {
+      this.exportError.set(
+        getApiErrorMessage(
+          error,
+          'Attendance CSV could not be exported right now. Please try again.',
+        ),
+      );
+      return false;
+    } finally {
+      this.isExportingCsv.set(false);
+    }
+  }
+
   async submitTodayAttendanceAction(): Promise<boolean> {
     const authenticatedUser = this.authenticatedUser();
 
@@ -462,6 +486,10 @@ export class AttendanceStore {
 
   clearDeleteError(): void {
     this.deleteError.set(null);
+  }
+
+  clearExportError(): void {
+    this.exportError.set(null);
   }
 
   clearDeleteSuccessMessage(): void {

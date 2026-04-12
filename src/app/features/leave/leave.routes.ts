@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 import { LeaveApiService } from './data-access/leave-api.service';
+import { LeaveTypeApiService } from './data-access/leave-type-api.service';
 import { LeaveStore } from './state/leave.store';
 
 export const leaveRoutes: Routes = [
   {
     path: '',
-    providers: [LeaveApiService, LeaveStore],
+    providers: [LeaveApiService, LeaveTypeApiService, LeaveStore],
     data: {
       allowedRoles: ['admin_hr', 'employee'],
     },

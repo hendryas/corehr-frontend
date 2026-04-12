@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 import { OrganizationApiService } from './data-access/organization-api.service';
+import { LeaveTypeApiService } from '../leave/data-access/leave-type-api.service';
 import { OrganizationStore } from './state/organization.store';
 
 export const organizationRoutes: Routes = [
   {
     path: '',
-    providers: [OrganizationApiService, OrganizationStore],
+    providers: [OrganizationApiService, LeaveTypeApiService, OrganizationStore],
     loadComponent: () =>
       import('./ui/organization-shell/organization-shell.component').then(
         (m) => m.OrganizationShellComponent,
@@ -92,6 +93,45 @@ export const organizationRoutes: Routes = [
         loadComponent: () =>
           import('./pages/position-edit/position-edit.component').then(
             (m) => m.PositionEditComponent,
+          ),
+      },
+      {
+        path: 'leave-types',
+        title: 'Leave Types | CoreHR',
+        data: {
+          eyebrow: 'Organization',
+          title: 'Leave types',
+          description: 'Manage leave type master data used by leave requests and approvals.',
+        },
+        loadComponent: () =>
+          import('./pages/leave-types-list/leave-types-list.component').then(
+            (m) => m.LeaveTypesListComponent,
+          ),
+      },
+      {
+        path: 'leave-types/new',
+        title: 'Create Leave Type | CoreHR',
+        data: {
+          eyebrow: 'Organization',
+          title: 'Add leave type',
+          description: 'Create a new leave type and keep leave request options up to date.',
+        },
+        loadComponent: () =>
+          import('./pages/leave-type-create/leave-type-create.component').then(
+            (m) => m.LeaveTypeCreateComponent,
+          ),
+      },
+      {
+        path: 'leave-types/:id/edit',
+        title: 'Edit Leave Type | CoreHR',
+        data: {
+          eyebrow: 'Organization',
+          title: 'Edit leave type',
+          description: 'Update the leave type label, code, and description used in leave requests.',
+        },
+        loadComponent: () =>
+          import('./pages/leave-type-edit/leave-type-edit.component').then(
+            (m) => m.LeaveTypeEditComponent,
           ),
       },
     ],

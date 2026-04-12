@@ -67,7 +67,7 @@ import { LeaveStatusBadgeComponent } from '../leave-status-badge/leave-status-ba
                   </div>
                 </td>
                 <td class="border-y border-ui-border bg-ui-surface px-4 py-4 text-sm text-ui-text">
-                  {{ leave.leaveType }}
+                  {{ leave.leaveTypeName }}
                 </td>
                 <td class="border-y border-ui-border bg-ui-surface px-4 py-4 text-sm text-ui-text">
                   <div>
@@ -145,7 +145,7 @@ import { LeaveStatusBadgeComponent } from '../leave-status-badge/leave-status-ba
             <dl class="mt-4 grid gap-3 sm:grid-cols-2">
               <div>
                 <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Leave type</dt>
-                <dd class="mt-1 text-sm font-medium text-ui-text">{{ leave.leaveType }}</dd>
+                <dd class="mt-1 text-sm font-medium text-ui-text">{{ leave.leaveTypeName }}</dd>
               </div>
               <div>
                 <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Total days</dt>

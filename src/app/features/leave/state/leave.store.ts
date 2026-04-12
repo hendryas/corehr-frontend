@@ -3,7 +3,9 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiErrorResponse } from '../../../core/models/api.model';
 import { AuthSessionService } from '../../../core/services/auth-session.service';
+import { downloadFile } from '../../../shared/utils/file.utils';
 import { LeaveApiService } from '../data-access/leave-api.service';
+import { LeaveTypeApiService } from '../data-access/leave-type-api.service';
 import {
   getApiErrorMessage,
   mapAuthenticatedUserToLeaveOption,
@@ -26,11 +28,12 @@ import {
   LeaveRequestStatus,
   LeaveSummary,
 } from '../domain/models/leave.model';
+import { LeaveTypeRecord } from '../domain/models/leave-type.model';
 
 const initialFilters: LeaveListQuery = {
   search: '',
   status: 'all',
-  leaveType: '',
+  leaveTypeId: null,
   startDate: '',
   endDate: '',
   page: 1,
@@ -54,6 +57,7 @@ const initialSummary: LeaveSummary = {
 @Injectable()
 export class LeaveStore {
   private readonly leaveApi = inject(LeaveApiService);
+  private readonly leaveTypeApi = inject(LeaveTypeApiService);
   private readonly authSession = inject(AuthSessionService);
 
   readonly filters = signal<LeaveListQuery>(initialFilters);
@@ -71,8 +75,11 @@ export class LeaveStore {
   readonly detailError = signal<string | null>(null);
 
   readonly employeeOptions = signal<LeaveEmployeeOption[]>([]);
-  readonly isReferenceLoading = signal(false);
-  readonly referenceError = signal<string | null>(null);
+  readonly isEmployeeOptionsLoading = signal(false);
+  readonly employeeOptionsError = signal<string | null>(null);
+  readonly leaveTypes = signal<LeaveTypeRecord[]>([]);
+  readonly isLeaveTypesLoading = signal(false);
+  readonly leaveTypesError = signal<string | null>(null);
 
   readonly isSubmitting = signal(false);
   readonly submitError = signal<string | null>(null);
@@ -82,6 +89,8 @@ export class LeaveStore {
   readonly processingAction = signal<LeaveActionType>(null);
   readonly actionError = signal<string | null>(null);
   readonly actionSuccessMessage = signal<string | null>(null);
+  readonly isExportingCsv = signal(false);
+  readonly exportError = signal<string | null>(null);
 
   private actionToastTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -109,7 +118,8 @@ export class LeaveStore {
         leave.employeeCode,
         leave.fullName,
         leave.departmentName,
-        leave.leaveType,
+        leave.leaveTypeName,
+        leave.leaveTypeCode,
         leave.reasonLabel,
       ].some((value) => value.toLowerCase().includes(term)),
     );
@@ -120,15 +130,13 @@ export class LeaveStore {
     return leave ? mapLeaveToDetail(leave, this.employeeLookup()) : null;
   });
 
-  readonly availableLeaveTypes = computed(() =>
-    Array.from(
-      new Set(
-        this.leaveRecords()
-          .map((leave) => leave.leaveType.trim())
-          .filter(Boolean),
-      ),
-    ).sort((a, b) => a.localeCompare(b)),
+  readonly isReferenceLoading = computed(
+    () => this.isEmployeeOptionsLoading() || this.isLeaveTypesLoading(),
   );
+  readonly referenceError = computed(
+    () => this.leaveTypesError() || this.employeeOptionsError(),
+  );
+  readonly hasLeaveTypes = computed(() => this.leaveTypes().length > 0);
 
   readonly hasLeaves = computed(() => this.filteredLeaves().length > 0);
   readonly isEmpty = computed(
@@ -236,10 +244,10 @@ export class LeaveStore {
       return;
     }
 
-    this.isReferenceLoading.set(true);
+    this.isEmployeeOptionsLoading.set(true);
 
     if (showError) {
-      this.referenceError.set(null);
+      this.employeeOptionsError.set(null);
     }
 
     try {
@@ -247,13 +255,47 @@ export class LeaveStore {
       this.employeeOptions.set(employees);
     } catch (error) {
       if (showError) {
-        this.referenceError.set(
+        this.employeeOptionsError.set(
           getApiErrorMessage(error, 'Employee options could not be loaded.'),
         );
       }
     } finally {
-      this.isReferenceLoading.set(false);
+      this.isEmployeeOptionsLoading.set(false);
     }
+  }
+
+  async loadLeaveTypes(forceReload = false, showError = true): Promise<void> {
+    if (!forceReload && this.leaveTypes().length > 0) {
+      return;
+    }
+
+    this.isLeaveTypesLoading.set(true);
+
+    if (showError) {
+      this.leaveTypesError.set(null);
+    }
+
+    try {
+      const leaveTypes = await firstValueFrom(this.leaveTypeApi.getLeaveTypes());
+      this.leaveTypes.set(leaveTypes);
+    } catch (error) {
+      this.leaveTypes.set([]);
+
+      if (showError) {
+        this.leaveTypesError.set(
+          getApiErrorMessage(error, 'Leave types could not be loaded.'),
+        );
+      }
+    } finally {
+      this.isLeaveTypesLoading.set(false);
+    }
+  }
+
+  async loadReferenceData(forceReload = false): Promise<void> {
+    await Promise.all([
+      this.loadEmployeeOptions(forceReload),
+      this.loadLeaveTypes(forceReload),
+    ]);
   }
 
   async createLeave(value: LeaveFormValue): Promise<LeaveDetail | null> {
@@ -303,6 +345,24 @@ export class LeaveStore {
     });
   }
 
+  async exportLeavesCsv(): Promise<boolean> {
+    this.isExportingCsv.set(true);
+    this.exportError.set(null);
+
+    try {
+      const download = await firstValueFrom(this.leaveApi.exportLeavesCsv(this.filters()));
+      downloadFile(download);
+      return true;
+    } catch (error) {
+      this.exportError.set(
+        getApiErrorMessage(error, 'Leave CSV could not be exported right now. Please try again.'),
+      );
+      return false;
+    } finally {
+      this.isExportingCsv.set(false);
+    }
+  }
+
   updateSearch(search: string): void {
     this.filters.update((state) => ({
       ...state,
@@ -319,10 +379,10 @@ export class LeaveStore {
     }));
   }
 
-  updateLeaveType(leaveType: string): void {
+  updateLeaveType(leaveTypeId: number | null): void {
     this.filters.update((state) => ({
       ...state,
-      leaveType,
+      leaveTypeId,
       page: 1,
     }));
   }
@@ -357,6 +417,10 @@ export class LeaveStore {
 
   clearActionError(): void {
     this.actionError.set(null);
+  }
+
+  clearExportError(): void {
+    this.exportError.set(null);
   }
 
   clearActionSuccessMessage(): void {

@@ -6,6 +6,7 @@ import {
   LeaveFormField,
   LeaveFormMode,
 } from '../../domain/models/leave.model';
+import { LeaveTypeRecord } from '../../domain/models/leave-type.model';
 import { LeaveFormGroup } from './leave-form.utils';
 
 @Component({
@@ -54,24 +55,23 @@ import { LeaveFormGroup } from './leave-form.utils';
           }
 
           <div class="space-y-2">
-            <label class="field-label" for="leaveType">Leave type</label>
-            <input
-              id="leaveType"
-              type="text"
+            <label class="field-label" for="leaveTypeId">Leave type</label>
+            <select
+              id="leaveTypeId"
               class="field-shell"
-              formControlName="leaveType"
-              placeholder="Annual Leave"
-              [attr.list]="leaveTypeOptions().length ? 'leave-type-options' : null"
-            />
-            @if (leaveTypeOptions().length) {
-              <datalist id="leave-type-options">
-                @for (leaveType of leaveTypeOptions(); track leaveType) {
-                  <option [value]="leaveType"></option>
-                }
-              </datalist>
+              formControlName="leaveTypeId"
+              [disabled]="isReferenceLoading() || leaveTypes().length === 0"
+            >
+              <option [ngValue]="null">Select leave type</option>
+              @for (leaveType of leaveTypes(); track leaveType.id) {
+                <option [ngValue]="leaveType.id">{{ leaveType.name }}</option>
+              }
+            </select>
+            @if (leaveTypeMessage()) {
+              <p class="text-xs font-medium text-ui-muted">{{ leaveTypeMessage() }}</p>
             }
-            @if (errorFor('leaveType')) {
-              <p class="field-error">{{ errorFor('leaveType') }}</p>
+            @if (errorFor('leaveTypeId')) {
+              <p class="field-error">{{ errorFor('leaveTypeId') }}</p>
             }
           </div>
 
@@ -116,7 +116,7 @@ import { LeaveFormGroup } from './leave-form.utils';
 
       <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
         <button type="button" class="btn-secondary" (click)="cancelForm.emit()">Cancel</button>
-        <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting() || disableSubmit()">
           {{ isSubmitting() ? 'Saving...' : mode() === 'create' ? 'Submit request' : 'Save changes' }}
         </button>
       </div>
@@ -127,11 +127,13 @@ export class LeaveFormComponent {
   readonly form = input.required<LeaveFormGroup>();
   readonly mode = input.required<LeaveFormMode>();
   readonly employeeOptions = input.required<LeaveEmployeeOption[]>();
-  readonly leaveTypeOptions = input<string[]>([]);
+  readonly leaveTypes = input<readonly LeaveTypeRecord[]>([]);
   readonly showEmployeeField = input(false);
   readonly selectedEmployeeLabel = input('');
+  readonly leaveTypeMessage = input<string | null>(null);
   readonly isReferenceLoading = input(false);
   readonly isSubmitting = input(false);
+  readonly disableSubmit = input(false);
   readonly submitError = input<string | null>(null);
   readonly fieldErrors = input<LeaveFormErrors>({});
 
@@ -170,6 +172,10 @@ export class LeaveFormComponent {
 
     if (!control.touched || !control.invalid) {
       return null;
+    }
+
+    if (control.errors?.['unavailableLeaveType']) {
+      return 'This leave type is no longer available. Please choose another leave type.';
     }
 
     if (control.errors?.['required']) {

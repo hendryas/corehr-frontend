@@ -2,7 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/constants/api.constants';
-import { ApiSuccessResponse } from '../../../core/models/api.model';
+import { ApiSuccessResponse, FileDownloadPayload } from '../../../core/models/api.model';
+import { resolveDownloadFilename } from '../../../shared/utils/file.utils';
 import { statusFilterToQuery } from '../domain/mappers/attendance.mapper';
 import {
   AttendanceApiRecord,
@@ -34,6 +35,24 @@ export class AttendanceApiService {
         params,
       })
       .pipe(map((response) => response.data));
+  }
+
+  exportAttendancesCsv(query: AttendanceListQuery): Observable<FileDownloadPayload> {
+    return this.http
+      .get(`${API_BASE_URL}/attendances/export/csv`, {
+        params: this.buildAttendanceListParams(query),
+        observe: 'response',
+        responseType: 'blob',
+      })
+      .pipe(
+        map((response) => ({
+          blob: response.body ?? new Blob([], { type: 'text/csv;charset=utf-8' }),
+          filename: resolveDownloadFilename(
+            response.headers.get('content-disposition'),
+            'attendances.csv',
+          ),
+        })),
+      );
   }
 
   getAttendanceById(id: number): Observable<AttendanceApiRecord> {

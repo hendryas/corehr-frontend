@@ -6,6 +6,7 @@ import {
   buildLeaveForm,
   getLeaveFormValue,
   patchLeaveForm,
+  syncLeaveTypeAvailability,
 } from '../../ui/leave-form/leave-form.utils';
 
 @Component({
@@ -20,6 +21,17 @@ import {
           <div>
             <p class="text-base font-semibold text-ui-text">Leave request detail could not be loaded</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.detailError() }}</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a routerLink="/leave" class="btn-secondary">Back to list</a>
+            <button type="button" class="btn-primary" (click)="reload()">Retry</button>
+          </div>
+        </div>
+      } @else if (store.referenceError() && !store.detail()) {
+        <div class="state-panel border-warning/25 bg-warning/5">
+          <div>
+            <p class="text-base font-semibold text-ui-text">Reference data is unavailable</p>
+            <p class="mt-2 text-sm text-ui-muted">{{ store.referenceError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
             <a routerLink="/leave" class="btn-secondary">Back to list</a>
@@ -59,10 +71,12 @@ import {
           [form]="form"
           [mode]="'edit'"
           [employeeOptions]="store.employeeOptions()"
-          [leaveTypeOptions]="store.availableLeaveTypes()"
+          [leaveTypes]="store.leaveTypes()"
           [showEmployeeField]="store.isAdmin()"
           [selectedEmployeeLabel]="selectedEmployeeLabel()"
+          [leaveTypeMessage]="leaveTypeMessage()"
           [isReferenceLoading]="store.isReferenceLoading()"
+          [disableSubmit]="isSubmitDisabled()"
           [isSubmitting]="store.isSubmitting()"
           [submitError]="store.submitError()"
           [fieldErrors]="store.formErrors()"
@@ -89,6 +103,30 @@ export class LeaveEditComponent {
 
     return `${leave.fullName} - ${leave.employeeCode}`;
   });
+  protected readonly leaveTypeMessage = computed(() => {
+    const leave = this.store.detail();
+    const leaveTypeId = this.form.controls.leaveTypeId.value;
+
+    if (this.store.leaveTypesError()) {
+      return 'Leave types could not be loaded yet. Please retry before submitting.';
+    }
+
+    if (
+      leave &&
+      leaveTypeId === leave.leaveTypeId &&
+      !this.store.leaveTypes().some((leaveType) => leaveType.id === leave.leaveTypeId)
+    ) {
+      return 'The leave type used in this request is no longer available. Please choose another leave type.';
+    }
+
+    return null;
+  });
+  protected readonly isSubmitDisabled = computed(
+    () =>
+      !this.store.hasLeaveTypes() ||
+      !!this.store.leaveTypesError() ||
+      (this.store.isAdmin() && this.store.employeeOptions().length === 0),
+  );
 
   constructor() {
     void this.reload();
@@ -127,7 +165,7 @@ export class LeaveEditComponent {
       return;
     }
 
-    await this.store.loadEmployeeOptions(true);
+    await this.store.loadReferenceData(true);
     await this.store.loadLeave(this.leaveId);
 
     const leave = this.store.detail();
@@ -137,5 +175,6 @@ export class LeaveEditComponent {
     }
 
     patchLeaveForm(this.form, leave);
+    syncLeaveTypeAvailability(this.form, this.store.leaveTypes());
   }
 }

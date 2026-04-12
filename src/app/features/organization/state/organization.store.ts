@@ -2,6 +2,20 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiErrorResponse } from '../../../core/models/api.model';
+import { LeaveTypeApiService } from '../../leave/data-access/leave-type-api.service';
+import {
+  getLeaveTypeApiErrorMessage,
+  mapLeaveTypeFormToRequest,
+  mapLeaveTypeToFormValue,
+  mapLeaveTypeToListItem,
+  mapLeaveTypeValidationErrors,
+} from '../../leave/domain/mappers/leave-type.mapper';
+import {
+  LeaveTypeFormErrors,
+  LeaveTypeFormValue,
+  LeaveTypeListItem,
+  LeaveTypeRecord,
+} from '../../leave/domain/models/leave-type.model';
 import { OrganizationApiService } from '../data-access/organization-api.service';
 import {
   getApiErrorMessage,
@@ -18,6 +32,7 @@ import {
   DepartmentApiRecord,
   DepartmentFormErrors,
   DepartmentFormValue,
+  LeaveTypeListFilters,
   DepartmentListFilters,
   DepartmentListItem,
   OrganizationSummary,
@@ -37,6 +52,10 @@ const initialPositionFilters: PositionListFilters = {
   departmentId: 'all',
 };
 
+const initialLeaveTypeFilters: LeaveTypeListFilters = {
+  search: '',
+};
+
 const initialSummary: OrganizationSummary = {
   totalDepartments: 0,
   activeDepartments: 0,
@@ -47,9 +66,11 @@ const initialSummary: OrganizationSummary = {
 @Injectable()
 export class OrganizationStore {
   private readonly organizationApi = inject(OrganizationApiService);
+  private readonly leaveTypeApi = inject(LeaveTypeApiService);
 
   readonly departmentFilters = signal<DepartmentListFilters>(initialDepartmentFilters);
   readonly positionFilters = signal<PositionListFilters>(initialPositionFilters);
+  readonly leaveTypeFilters = signal<LeaveTypeListFilters>(initialLeaveTypeFilters);
 
   private readonly departmentRecords = signal<DepartmentApiRecord[]>([]);
   readonly isDepartmentsLoading = signal(false);
@@ -67,6 +88,14 @@ export class OrganizationStore {
   readonly isPositionDetailLoading = signal(false);
   readonly positionDetailError = signal<string | null>(null);
 
+  private readonly leaveTypeRecords = signal<LeaveTypeRecord[]>([]);
+  readonly isLeaveTypesLoading = signal(false);
+  readonly leaveTypesError = signal<string | null>(null);
+
+  private readonly leaveTypeDetailRecord = signal<LeaveTypeRecord | null>(null);
+  readonly isLeaveTypeDetailLoading = signal(false);
+  readonly leaveTypeDetailError = signal<string | null>(null);
+
   readonly isDepartmentSubmitting = signal(false);
   readonly departmentSubmitError = signal<string | null>(null);
   readonly departmentFormErrors = signal<DepartmentFormErrors>({});
@@ -74,6 +103,10 @@ export class OrganizationStore {
   readonly isPositionSubmitting = signal(false);
   readonly positionSubmitError = signal<string | null>(null);
   readonly positionFormErrors = signal<PositionFormErrors>({});
+
+  readonly isLeaveTypeSubmitting = signal(false);
+  readonly leaveTypeSubmitError = signal<string | null>(null);
+  readonly leaveTypeFormErrors = signal<LeaveTypeFormErrors>({});
 
   readonly deletingDepartmentId = signal<number | null>(null);
   readonly departmentDeleteError = signal<string | null>(null);
@@ -83,14 +116,20 @@ export class OrganizationStore {
   readonly positionDeleteError = signal<string | null>(null);
   readonly positionSuccessMessage = signal<string | null>(null);
 
+  readonly deletingLeaveTypeId = signal<number | null>(null);
+  readonly leaveTypeDeleteError = signal<string | null>(null);
+  readonly leaveTypeSuccessMessage = signal<string | null>(null);
+
   private departmentToastTimeout: ReturnType<typeof setTimeout> | null = null;
   private positionToastTimeout: ReturnType<typeof setTimeout> | null = null;
+  private leaveTypeToastTimeout: ReturnType<typeof setTimeout> | null = null;
 
   readonly departments = computed(() =>
     this.departmentRecords().map(mapDepartmentToListItem),
   );
 
   readonly positions = computed(() => this.positionRecords().map(mapPositionToListItem));
+  readonly leaveTypes = computed(() => this.leaveTypeRecords().map(mapLeaveTypeToListItem));
 
   readonly filteredDepartments = computed<DepartmentListItem[]>(() => {
     const term = this.departmentFilters().search.trim().toLowerCase();
@@ -127,6 +166,21 @@ export class OrganizationStore {
     );
   });
 
+  readonly filteredLeaveTypes = computed<LeaveTypeListItem[]>(() => {
+    const term = this.leaveTypeFilters().search.trim().toLowerCase();
+    const leaveTypes = this.leaveTypes();
+
+    if (!term) {
+      return leaveTypes;
+    }
+
+    return leaveTypes.filter((leaveType) =>
+      [leaveType.code, leaveType.name, leaveType.descriptionLabel].some((value) =>
+        value.toLowerCase().includes(term),
+      ),
+    );
+  });
+
   readonly summary = computed<OrganizationSummary>(() => ({
     totalDepartments: this.departmentRecords().length,
     activeDepartments: this.departmentRecords().length,
@@ -140,6 +194,7 @@ export class OrganizationStore {
 
   readonly hasDepartments = computed(() => this.filteredDepartments().length > 0);
   readonly hasPositions = computed(() => this.filteredPositions().length > 0);
+  readonly hasLeaveTypes = computed(() => this.filteredLeaveTypes().length > 0);
 
   readonly isDepartmentsEmpty = computed(
     () =>
@@ -155,6 +210,13 @@ export class OrganizationStore {
       this.filteredPositions().length === 0,
   );
 
+  readonly isLeaveTypesEmpty = computed(
+    () =>
+      !this.isLeaveTypesLoading() &&
+      !this.leaveTypesError() &&
+      this.filteredLeaveTypes().length === 0,
+  );
+
   readonly departmentDetail = computed(() => {
     const department = this.departmentDetailRecord();
     return department ? mapDepartmentToFormValue(department) : null;
@@ -163,6 +225,11 @@ export class OrganizationStore {
   readonly positionDetail = computed(() => {
     const position = this.positionDetailRecord();
     return position ? mapPositionToFormValue(position) : null;
+  });
+
+  readonly leaveTypeDetail = computed(() => {
+    const leaveType = this.leaveTypeDetailRecord();
+    return leaveType ? mapLeaveTypeToFormValue(leaveType) : null;
   });
 
   async loadDepartments(forceReload = false): Promise<void> {
@@ -211,6 +278,27 @@ export class OrganizationStore {
     await Promise.all([this.loadDepartments(forceReload), this.loadPositions(forceReload)]);
   }
 
+  async loadLeaveTypes(forceReload = false): Promise<void> {
+    if (!forceReload && this.leaveTypeRecords().length > 0) {
+      return;
+    }
+
+    this.isLeaveTypesLoading.set(true);
+    this.leaveTypesError.set(null);
+
+    try {
+      const leaveTypes = await firstValueFrom(this.leaveTypeApi.getLeaveTypes());
+      this.leaveTypeRecords.set(leaveTypes);
+    } catch (error) {
+      this.leaveTypeRecords.set([]);
+      this.leaveTypesError.set(
+        getLeaveTypeApiErrorMessage(error, 'Leave types are unavailable right now.'),
+      );
+    } finally {
+      this.isLeaveTypesLoading.set(false);
+    }
+  }
+
   async loadDepartment(id: number): Promise<void> {
     this.isDepartmentDetailLoading.set(true);
     this.departmentDetailError.set(null);
@@ -246,6 +334,25 @@ export class OrganizationStore {
       );
     } finally {
       this.isPositionDetailLoading.set(false);
+    }
+  }
+
+  async loadLeaveType(id: number): Promise<void> {
+    this.isLeaveTypeDetailLoading.set(true);
+    this.leaveTypeDetailError.set(null);
+    this.leaveTypeDetailRecord.set(null);
+
+    try {
+      const leaveType =
+        this.leaveTypeRecords().find((item) => item.id === id) ??
+        (await firstValueFrom(this.leaveTypeApi.getLeaveTypeById(id)));
+      this.leaveTypeDetailRecord.set(leaveType);
+    } catch (error) {
+      this.leaveTypeDetailError.set(
+        getLeaveTypeApiErrorMessage(error, 'Leave type detail could not be loaded right now.'),
+      );
+    } finally {
+      this.isLeaveTypeDetailLoading.set(false);
     }
   }
 
@@ -370,6 +477,64 @@ export class OrganizationStore {
     }
   }
 
+  async createLeaveType(value: LeaveTypeFormValue): Promise<LeaveTypeRecord | null> {
+    this.isLeaveTypeSubmitting.set(true);
+    this.clearLeaveTypeSubmitState();
+
+    try {
+      const leaveType = await firstValueFrom(
+        this.leaveTypeApi.createLeaveType(mapLeaveTypeFormToRequest(value)),
+      );
+
+      await this.loadLeaveTypes(true);
+      return leaveType;
+    } catch (error) {
+      this.handleLeaveTypeSubmitError(error);
+      return null;
+    } finally {
+      this.isLeaveTypeSubmitting.set(false);
+    }
+  }
+
+  async updateLeaveType(id: number, value: LeaveTypeFormValue): Promise<LeaveTypeRecord | null> {
+    this.isLeaveTypeSubmitting.set(true);
+    this.clearLeaveTypeSubmitState();
+
+    try {
+      const leaveType = await firstValueFrom(
+        this.leaveTypeApi.updateLeaveType(id, mapLeaveTypeFormToRequest(value)),
+      );
+
+      await this.loadLeaveTypes(true);
+      this.leaveTypeDetailRecord.set(leaveType);
+      return leaveType;
+    } catch (error) {
+      this.handleLeaveTypeSubmitError(error);
+      return null;
+    } finally {
+      this.isLeaveTypeSubmitting.set(false);
+    }
+  }
+
+  async deleteLeaveType(id: number): Promise<boolean> {
+    this.deletingLeaveTypeId.set(id);
+    this.leaveTypeDeleteError.set(null);
+
+    try {
+      const apiMessage = await firstValueFrom(this.leaveTypeApi.deleteLeaveType(id));
+      await this.loadLeaveTypes(true);
+      this.showLeaveTypeSuccessMessage(apiMessage.trim() || 'Leave type berhasil dihapus.');
+      return true;
+    } catch (error) {
+      this.leaveTypeDeleteError.set(
+        getLeaveTypeApiErrorMessage(error, 'Leave type could not be removed.'),
+      );
+      return false;
+    } finally {
+      this.deletingLeaveTypeId.set(null);
+    }
+  }
+
   updateDepartmentSearch(search: string): void {
     this.departmentFilters.set({ search });
   }
@@ -382,12 +547,20 @@ export class OrganizationStore {
     this.positionFilters.update((state) => ({ ...state, departmentId }));
   }
 
+  updateLeaveTypeSearch(search: string): void {
+    this.leaveTypeFilters.set({ search });
+  }
+
   clearDepartmentDeleteError(): void {
     this.departmentDeleteError.set(null);
   }
 
   clearPositionDeleteError(): void {
     this.positionDeleteError.set(null);
+  }
+
+  clearLeaveTypeDeleteError(): void {
+    this.leaveTypeDeleteError.set(null);
   }
 
   clearDepartmentSuccessMessage(): void {
@@ -408,6 +581,15 @@ export class OrganizationStore {
     }
   }
 
+  clearLeaveTypeSuccessMessage(): void {
+    this.leaveTypeSuccessMessage.set(null);
+
+    if (this.leaveTypeToastTimeout) {
+      clearTimeout(this.leaveTypeToastTimeout);
+      this.leaveTypeToastTimeout = null;
+    }
+  }
+
   private clearDepartmentSubmitState(): void {
     this.departmentSubmitError.set(null);
     this.departmentFormErrors.set({});
@@ -416,6 +598,11 @@ export class OrganizationStore {
   private clearPositionSubmitState(): void {
     this.positionSubmitError.set(null);
     this.positionFormErrors.set({});
+  }
+
+  private clearLeaveTypeSubmitState(): void {
+    this.leaveTypeSubmitError.set(null);
+    this.leaveTypeFormErrors.set({});
   }
 
   private handleDepartmentSubmitError(error: unknown): void {
@@ -433,6 +620,17 @@ export class OrganizationStore {
     if (error instanceof HttpErrorResponse) {
       const apiError = error.error as ApiErrorResponse | undefined;
       this.positionFormErrors.set(mapPositionValidationErrors(apiError?.errors));
+    }
+  }
+
+  private handleLeaveTypeSubmitError(error: unknown): void {
+    this.leaveTypeSubmitError.set(
+      getLeaveTypeApiErrorMessage(error, 'Changes could not be saved.'),
+    );
+
+    if (error instanceof HttpErrorResponse) {
+      const apiError = error.error as ApiErrorResponse | undefined;
+      this.leaveTypeFormErrors.set(mapLeaveTypeValidationErrors(apiError?.errors));
     }
   }
 
@@ -459,6 +657,19 @@ export class OrganizationStore {
     this.positionToastTimeout = setTimeout(() => {
       this.positionSuccessMessage.set(null);
       this.positionToastTimeout = null;
+    }, 4000);
+  }
+
+  private showLeaveTypeSuccessMessage(message: string): void {
+    this.leaveTypeSuccessMessage.set(message);
+
+    if (this.leaveTypeToastTimeout) {
+      clearTimeout(this.leaveTypeToastTimeout);
+    }
+
+    this.leaveTypeToastTimeout = setTimeout(() => {
+      this.leaveTypeSuccessMessage.set(null);
+      this.leaveTypeToastTimeout = null;
     }, 4000);
   }
 }
