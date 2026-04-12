@@ -16,7 +16,7 @@ export const attendanceRoutes: Routes = [
         data: {
           eyebrow: 'Attendance Hub',
           title: 'Attendance',
-          description: 'Review daily attendance activity and keep employee attendance records up to date.',
+          description: 'Check daily attendance and see the latest employee attendance updates.',
         },
         loadComponent: () =>
           import('./pages/attendance-list/attendance-list.component').then(
@@ -30,7 +30,7 @@ export const attendanceRoutes: Routes = [
           allowedRoles: ['admin_hr'],
           eyebrow: 'Attendance Hub',
           title: 'Add attendance',
-          description: 'Create a new attendance record and complete the attendance details.',
+          description: 'Add an attendance entry by filling in the details below.',
         },
         loadComponent: () =>
           import('./pages/attendance-create/attendance-create.component').then(
@@ -44,7 +44,7 @@ export const attendanceRoutes: Routes = [
           allowedRoles: ['admin_hr'],
           eyebrow: 'Attendance Hub',
           title: 'Edit attendance',
-          description: 'Update attendance timing, status, and notes for an existing record.',
+          description: 'Update the attendance status, time, or note if needed.',
         },
         loadComponent: () =>
           import('./pages/attendance-edit/attendance-edit.component').then(
@@ -57,7 +57,7 @@ export const attendanceRoutes: Routes = [
         data: {
           eyebrow: 'Attendance Hub',
           title: 'Attendance detail',
-          description: 'View the full attendance record, employee information, and attendance status.',
+          description: 'See attendance details, employee information, and status.',
         },
         loadComponent: () =>
           import('./pages/attendance-detail/attendance-detail.component').then(

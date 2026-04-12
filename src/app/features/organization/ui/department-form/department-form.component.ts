@@ -22,7 +22,7 @@ import { DepartmentFormGroup } from './department-form.utils';
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
           <h2 class="text-xl font-bold text-ui-text">Department information</h2>
-          <p class="mt-1 muted-copy">Add the main department details used across the HR modules.</p>
+          <p class="mt-1 muted-copy">Add the main details for this department.</p>
         </div>
 
         <div class="mt-5 grid gap-5">

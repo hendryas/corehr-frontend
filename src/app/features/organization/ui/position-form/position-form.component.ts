@@ -23,7 +23,7 @@ import { PositionFormGroup } from './position-form.utils';
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
           <h2 class="text-xl font-bold text-ui-text">Position information</h2>
-          <p class="mt-1 muted-copy">Assign the position to a department and add the supporting description.</p>
+          <p class="mt-1 muted-copy">Choose a department and add the position details.</p>
         </div>
 
         <div class="mt-5 grid gap-5">

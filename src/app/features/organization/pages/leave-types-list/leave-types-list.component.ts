@@ -105,7 +105,7 @@ import { LeaveTypesTableComponent } from '../../ui/leave-types-table/leave-types
       @if (store.leaveTypesError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Leave types are unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Leave types can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.leaveTypesError() }}</p>
           </div>
           <button type="button" class="btn-secondary" (click)="reload()">Retry</button>
@@ -123,9 +123,7 @@ import { LeaveTypesTableComponent } from '../../ui/leave-types-table/leave-types
         <div class="state-panel">
           <div>
             <p class="text-base font-semibold text-ui-text">No leave types found</p>
-            <p class="mt-2 text-sm text-ui-muted">
-              Add a leave type so users can choose it in the leave request form.
-            </p>
+            <p class="mt-2 text-sm text-ui-muted">Add a leave type so it can be used in leave requests.</p>
           </div>
           <button type="button" class="btn-primary" (click)="openCreate()">Add leave type</button>
         </div>
@@ -151,7 +149,7 @@ import { LeaveTypesTableComponent } from '../../ui/leave-types-table/leave-types
                 <p class="mt-1 text-sm text-ui-muted">{{ pendingDelete()?.code }}</p>
               </div>
               <p class="text-xs leading-5 text-ui-muted">
-                Make sure this leave type is no longer used by active leave requests before continuing.
+                Make sure this leave type is no longer being used before continuing.
               </p>
             </div>
             <div flowbiteModalFooter class="!justify-end !border-ui-border">

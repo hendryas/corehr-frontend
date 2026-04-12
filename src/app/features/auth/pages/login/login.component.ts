@@ -32,7 +32,7 @@ import { AuthLoginStore } from '../../state/auth-login.store';
                 <span class="text-sm font-semibold text-brand-blue">{{ brandName }}</span>
               </div>
               <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-brand-blue">Admin access</p>
+                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-brand-blue">HR sign in</p>
                 <h1 class="mt-3 text-4xl font-bold text-ui-text">Welcome back</h1>
                 <p class="mt-3 muted-copy">{{ subtitle }}</p>
               </div>
@@ -86,7 +86,7 @@ import { AuthLoginStore } from '../../state/auth-login.store';
                   </button>
                 </div>
                 @if (form.controls.password.invalid && form.controls.password.touched) {
-                  <p class="text-sm font-medium text-danger">Password must contain at least 8 characters.</p>
+                  <p class="text-sm font-medium text-danger">Enter your password to continue.</p>
                 }
               </div>
 
@@ -95,7 +95,7 @@ import { AuthLoginStore } from '../../state/auth-login.store';
                 class="btn-primary w-full justify-center !py-3"
                 [disabled]="form.invalid || store.isSubmitting()"
               >
-                {{ store.isSubmitting() ? 'Signing in...' : 'Sign in to dashboard' }}
+                {{ store.isSubmitting() ? 'Signing in...' : 'Sign in' }}
               </button>
 
               @if (store.errorMessage()) {
@@ -107,28 +107,28 @@ import { AuthLoginStore } from '../../state/auth-login.store';
 
             <div class="mt-6 rounded-[24px] border border-ui-border bg-ui-surface/80 px-4 py-4">
               <p class="text-sm text-ui-muted">
-                Need employee access?
+                Signing in as an employee?
                 <a
                   routerLink="/employee-login"
                   class="font-semibold text-brand-blue transition hover:text-brand-blueDark"
                 >
-                  Sign in through the employee portal
+                  Go to employee sign in
                 </a>
               </p>
             </div>
 
             <div class="mt-8 grid gap-4 rounded-[28px] border border-ui-border bg-ui-surface p-5 sm:grid-cols-3">
               <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Role</p>
-                <p class="mt-2 text-sm font-semibold text-ui-text">admin_hr</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">For</p>
+                <p class="mt-2 text-sm font-semibold text-ui-text">HR team</p>
               </div>
               <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Mode</p>
-                <p class="mt-2 text-sm font-semibold text-ui-text">Live API</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Use</p>
+                <p class="mt-2 text-sm font-semibold text-ui-text">Work email</p>
               </div>
               <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Next</p>
-                <p class="mt-2 text-sm font-semibold text-ui-text">Dashboard sync</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">After sign in</p>
+                <p class="mt-2 text-sm font-semibold text-ui-text">Open dashboard</p>
               </div>
             </div>
           </div>
@@ -138,32 +138,36 @@ import { AuthLoginStore } from '../../state/auth-login.store';
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(31,111,178,0.35),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(217,161,26,0.22),_transparent_28%)]"></div>
           <div class="relative flex w-full flex-col justify-between">
             <div class="space-y-6">
-              <p class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">CoreHR foundation</p>
+              <p class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">CoreHR for HR teams</p>
               <h2 class="max-w-md text-4xl font-bold leading-tight">
-                A clean enterprise shell for HR modules, reports, and admin operations.
+                Manage people, attendance, leave, and company records from one workspace.
               </h2>
               <p class="max-w-lg text-base leading-7 text-slate-300">
-                This first phase focuses on brand-consistent UI, scalable Angular structure, and reusable dashboard building blocks.
+                Stay on top of daily HR work with one place to review updates, keep records current, and handle requests faster.
               </p>
             </div>
 
             <div class="grid gap-4">
               <div class="rounded-[28px] border border-white/10 bg-white/6 p-6">
-                <p class="text-sm font-semibold text-brand-gold">Starter status</p>
-                <p class="mt-3 text-2xl font-bold">Angular + Tailwind + Flowbite Angular</p>
+                <p class="text-sm font-semibold text-brand-gold">What you can do</p>
+                <p class="mt-3 text-2xl font-bold">Keep HR work moving every day</p>
                 <p class="mt-3 text-sm leading-6 text-slate-300">
-                  Layout system, responsive navigation, dummy dashboard widgets, and auth shell are ready.
+                  Review employee data, monitor attendance, process leave requests, and keep organization records up to date.
                 </p>
               </div>
 
               <div class="grid gap-4 sm:grid-cols-2">
                 <div class="rounded-[24px] border border-white/10 bg-white/6 p-5">
-                  <p class="text-sm font-semibold text-white">Brand blue</p>
-                  <div class="mt-4 h-16 rounded-2xl bg-brand-blue"></div>
+                  <p class="text-sm font-semibold text-white">Need employee sign in?</p>
+                  <p class="mt-4 text-sm leading-6 text-slate-300">
+                    Employees can use a separate sign-in page with tools focused on attendance and leave.
+                  </p>
                 </div>
                 <div class="rounded-[24px] border border-white/10 bg-white/6 p-5">
-                  <p class="text-sm font-semibold text-white">Accent gold</p>
-                  <div class="mt-4 h-16 rounded-2xl bg-brand-gold"></div>
+                  <p class="text-sm font-semibold text-white">Signing in again?</p>
+                  <p class="mt-4 text-sm leading-6 text-slate-300">
+                    If your session has ended, just sign in again to return to your work.
+                  </p>
                 </div>
               </div>
             </div>
@@ -186,7 +190,7 @@ export class LoginComponent {
   });
   protected readonly sessionTimeoutMessage = computed(() =>
     this.queryParamMap().get(SESSION_TIMEOUT_REASON_QUERY_PARAM) === SESSION_TIMEOUT_REASON
-      ? 'Sesi Anda berakhir karena tidak ada aktivitas selama 15 menit. Silakan login kembali.'
+      ? 'Your session ended after 15 minutes of inactivity. Please sign in again.'
       : null,
   );
 
@@ -198,7 +202,7 @@ export class LoginComponent {
 
     void this.store.signIn(this.form.getRawValue(), {
       expectedRole: 'admin_hr',
-      roleMismatchMessage: 'Dashboard admin hanya bisa diakses oleh akun admin_hr.',
+      roleMismatchMessage: 'This page is only for HR accounts. Use the employee sign-in page if needed.',
     });
   }
 

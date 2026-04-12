@@ -9,6 +9,7 @@ describe('Runtime smoke', () => {
   it('creates the dashboard home component', async () => {
     await TestBed.configureTestingModule({
       imports: [DashboardHomeComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(DashboardHomeComponent);

@@ -21,7 +21,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-gold/15 text-brand-gold">
           01
         </span>
-        Foundation dashboard phase for CoreHR CMS
+        Review the latest updates and continue your work from here
       </div>
     </section>
   `,

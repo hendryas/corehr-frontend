@@ -73,7 +73,7 @@ import { LeaveStatusBadgeComponent } from '../../ui/leave-status-badge/leave-sta
       @if (store.detailError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Leave request detail could not be loaded</p>
+            <p class="text-base font-semibold text-ui-text">Leave request details can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.detailError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -146,19 +146,19 @@ import { LeaveStatusBadgeComponent } from '../../ui/leave-status-badge/leave-sta
 
         <app-leave-info-section
           [title]="'Employee information'"
-          [description]="'Employee and assignment details related to this leave request.'"
+          [description]="'Basic employee details for this request.'"
           [items]="employeeInfo()"
         />
 
         <app-leave-info-section
           [title]="'Leave request information'"
-          [description]="'Leave period, status, and the reason submitted for this request.'"
+          [description]="'Leave dates, status, and reason.'"
           [items]="leaveInfo()"
         />
 
         <app-leave-info-section
           [title]="'Approval information'"
-          [description]="'Review details and approval updates for this leave request.'"
+          [description]="'Approval details and the latest updates.'"
           [items]="approvalInfo()"
         />
 
@@ -183,7 +183,7 @@ import { LeaveStatusBadgeComponent } from '../../ui/leave-status-badge/leave-sta
                       rows="4"
                       class="field-shell min-h-28 resize-y"
                       [formControl]="rejectionReasonControl"
-                      placeholder="Add the reason for rejecting this request"
+                      placeholder="Add a reason for rejection"
                     ></textarea>
                     @if (rejectionReasonControl.touched && rejectionReasonControl.invalid) {
                       <p class="field-error">Rejection note is required.</p>

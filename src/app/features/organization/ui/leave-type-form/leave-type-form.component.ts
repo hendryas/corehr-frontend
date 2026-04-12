@@ -22,7 +22,7 @@ import { LeaveTypeFormGroup } from './leave-type-form.utils';
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
           <h2 class="text-xl font-bold text-ui-text">Leave type information</h2>
-          <p class="mt-1 muted-copy">Set the leave type code, label, and optional description used in leave requests.</p>
+          <p class="mt-1 muted-copy">Add the code, name, and optional description for this leave type.</p>
         </div>
 
         <div class="mt-5 grid gap-5">

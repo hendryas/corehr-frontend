@@ -15,7 +15,7 @@ import { EmployeeStatusBadgeComponent } from '../../ui/employee-status-badge/emp
       @if (store.detailError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Employee information could not be loaded</p>
+            <p class="text-base font-semibold text-ui-text">Employee data can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.detailError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -65,19 +65,19 @@ import { EmployeeStatusBadgeComponent } from '../../ui/employee-status-badge/emp
 
         <app-employee-info-section
           [title]="'Personal information'"
-          [description]="'General contact and profile details.'"
+          [description]="'Basic contact and profile details.'"
           [items]="personalInfo()"
         />
 
         <app-employee-info-section
           [title]="'Work information'"
-          [description]="'Role, department, and work-related details.'"
+          [description]="'Role, department, and work details.'"
           [items]="workInfo()"
         />
 
         <app-employee-info-section
           [title]="'Status'"
-          [description]="'Current employee status and latest record updates.'"
+          [description]="'Current status and recent updates.'"
           [items]="statusInfo()"
         />
       }

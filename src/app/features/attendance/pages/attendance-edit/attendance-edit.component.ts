@@ -18,17 +18,15 @@ import {
       @if (!store.isAdmin()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">This page is unavailable</p>
-            <p class="mt-2 text-sm text-ui-muted">
-              Attendance updates are only available for HR administrators.
-            </p>
+            <p class="text-base font-semibold text-ui-text">You can't open this page</p>
+            <p class="mt-2 text-sm text-ui-muted">Only HR can update attendance records.</p>
           </div>
           <a routerLink="/attendance" class="btn-secondary">Back to list</a>
         </div>
       } @else if (store.detailError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Attendance detail could not be loaded</p>
+            <p class="text-base font-semibold text-ui-text">Attendance details can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.detailError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -41,11 +39,11 @@ import {
           <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 class="text-2xl font-bold text-ui-text">Edit attendance</h2>
-              <p class="mt-1 muted-copy">Update attendance timing, status, and additional notes when needed.</p>
+              <p class="mt-1 muted-copy">Update the attendance status, time, or note if needed.</p>
             </div>
             <div class="flex flex-wrap gap-3">
               @if (attendanceId) {
-                <a [routerLink]="['/attendance', attendanceId]" class="btn-secondary">View detail</a>
+                <a [routerLink]="['/attendance', attendanceId]" class="btn-secondary">View</a>
               }
               <a routerLink="/attendance" class="btn-secondary">Back to list</a>
             </div>

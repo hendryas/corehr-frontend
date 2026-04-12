@@ -17,11 +17,9 @@ import {
       <div class="surface-card p-6">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-blue">Employee onboarding</p>
-            <h2 class="mt-2 text-2xl font-bold text-ui-text">Create a new employee profile</h2>
-            <p class="mt-2 muted-copy">
-              Fill in the employee information below to add a new profile.
-            </p>
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-blue">Add employee</p>
+            <h2 class="mt-2 text-2xl font-bold text-ui-text">New employee</h2>
+            <p class="mt-2 muted-copy">Fill in the details below to add a new employee.</p>
           </div>
           <a routerLink="/employees" class="btn-secondary">Back to list</a>
         </div>
@@ -30,7 +28,7 @@ import {
       @if (store.referenceError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Some form options are unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Some options can't be shown yet</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.referenceError() }}</p>
           </div>
           <button type="button" class="btn-secondary" (click)="reloadReferenceData()">Retry</button>
@@ -65,7 +63,7 @@ export class EmployeeCreateComponent {
     }
 
     return this.store.suggestedEmployeeCode()
-      ? 'Employee code was prepared from the latest employee records.'
+      ? 'Employee code is ready to use.'
       : null;
   });
   protected readonly employeeCodeStatusTone = computed<'default' | 'warning'>(() =>

@@ -18,7 +18,7 @@ import {
         <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 class="text-2xl font-bold text-ui-text">Add position</h2>
-            <p class="mt-1 muted-copy">Create a new position and assign it to the correct department.</p>
+            <p class="mt-1 muted-copy">Fill in the details below to add a position.</p>
           </div>
           <a routerLink="/organization/positions" class="btn-secondary">Back to positions</a>
         </div>

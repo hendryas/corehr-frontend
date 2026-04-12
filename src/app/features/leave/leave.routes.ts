@@ -17,7 +17,7 @@ export const leaveRoutes: Routes = [
         data: {
           eyebrow: 'Leave Hub',
           title: 'Leave',
-          description: 'Track leave requests, review approvals, and keep leave records up to date.',
+          description: 'See leave requests, approval status, and the latest updates in one place.',
         },
         loadComponent: () =>
           import('./pages/leave-list/leave-list.component').then((m) => m.LeaveListComponent),
@@ -28,7 +28,7 @@ export const leaveRoutes: Routes = [
         data: {
           eyebrow: 'Leave Hub',
           title: 'Add leave request',
-          description: 'Create a new leave request and complete the required details.',
+          description: 'Add a leave request by filling in the details below.',
         },
         loadComponent: () =>
           import('./pages/leave-create/leave-create.component').then(
@@ -41,7 +41,7 @@ export const leaveRoutes: Routes = [
         data: {
           eyebrow: 'Leave Hub',
           title: 'Edit leave request',
-          description: 'Update the leave period or reason while the request is still pending.',
+          description: 'Update the dates or reason while the request is still pending.',
         },
         loadComponent: () =>
           import('./pages/leave-edit/leave-edit.component').then((m) => m.LeaveEditComponent),
@@ -52,7 +52,7 @@ export const leaveRoutes: Routes = [
         data: {
           eyebrow: 'Leave Hub',
           title: 'Leave detail',
-          description: 'View full leave request details, approval status, and employee information.',
+          description: 'See leave request details, status, and employee information.',
         },
         loadComponent: () =>
           import('./pages/leave-detail/leave-detail.component').then(

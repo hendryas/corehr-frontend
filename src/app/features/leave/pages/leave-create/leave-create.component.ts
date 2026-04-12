@@ -18,7 +18,7 @@ import {
       @if (store.referenceError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Reference data is unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Some options can't be shown yet</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.referenceError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -32,7 +32,7 @@ import {
         <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 class="text-2xl font-bold text-ui-text">Add leave request</h2>
-            <p class="mt-1 muted-copy">Create a new leave request and complete the required details.</p>
+            <p class="mt-1 muted-copy">Fill in the leave details below.</p>
           </div>
           <a routerLink="/leave" class="btn-secondary">Back to list</a>
         </div>
@@ -73,7 +73,7 @@ export class LeaveCreateComponent {
   });
   protected readonly leaveTypeMessage = computed(() =>
     this.store.leaveTypesError()
-      ? 'Leave types could not be loaded yet. Please retry before submitting.'
+      ? "Leave type options aren't ready yet. Try again before saving."
       : null,
   );
   protected readonly isSubmitDisabled = computed(

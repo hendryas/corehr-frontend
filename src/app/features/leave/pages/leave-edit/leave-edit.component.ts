@@ -19,7 +19,7 @@ import {
       @if (store.detailError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Leave request detail could not be loaded</p>
+            <p class="text-base font-semibold text-ui-text">Leave request details can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.detailError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -30,7 +30,7 @@ import {
       } @else if (store.referenceError() && !store.detail()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Reference data is unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Some options can't be shown yet</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.referenceError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -42,12 +42,10 @@ import {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
             <p class="text-base font-semibold text-ui-text">This request can no longer be edited</p>
-            <p class="mt-2 text-sm text-ui-muted">
-              Only pending leave requests can be updated.
-            </p>
+            <p class="mt-2 text-sm text-ui-muted">Only pending requests can be changed.</p>
           </div>
           <div class="flex flex-wrap gap-3">
-            <a [routerLink]="['/leave', leaveId]" class="btn-secondary">View detail</a>
+            <a [routerLink]="['/leave', leaveId]" class="btn-secondary">View</a>
             <a routerLink="/leave" class="btn-secondary">Back to list</a>
           </div>
         </div>
@@ -56,11 +54,11 @@ import {
           <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 class="text-2xl font-bold text-ui-text">Edit leave request</h2>
-              <p class="mt-1 muted-copy">Update the leave period or request reason while the request is still pending.</p>
+              <p class="mt-1 muted-copy">Update the dates or reason while the request is still pending.</p>
             </div>
             <div class="flex flex-wrap gap-3">
               @if (leaveId) {
-                <a [routerLink]="['/leave', leaveId]" class="btn-secondary">View detail</a>
+                <a [routerLink]="['/leave', leaveId]" class="btn-secondary">View</a>
               }
               <a routerLink="/leave" class="btn-secondary">Back to list</a>
             </div>
@@ -108,7 +106,7 @@ export class LeaveEditComponent {
     const leaveTypeId = this.form.controls.leaveTypeId.value;
 
     if (this.store.leaveTypesError()) {
-      return 'Leave types could not be loaded yet. Please retry before submitting.';
+      return "Leave type options aren't ready yet. Try again before saving.";
     }
 
     if (
@@ -116,7 +114,7 @@ export class LeaveEditComponent {
       leaveTypeId === leave.leaveTypeId &&
       !this.store.leaveTypes().some((leaveType) => leaveType.id === leave.leaveTypeId)
     ) {
-      return 'The leave type used in this request is no longer available. Please choose another leave type.';
+      return 'The leave type used in this request is no longer available. Please choose another one.';
     }
 
     return null;

@@ -89,7 +89,7 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
         <div class="rounded-[24px] border border-warning/20 bg-warning/5 px-5 py-4">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p class="text-sm font-semibold text-ui-text">Leave type filter is temporarily unavailable</p>
+              <p class="text-sm font-semibold text-ui-text">Leave type options can't be shown yet</p>
               <p class="mt-1 text-sm text-ui-muted">{{ store.leaveTypesError() }}</p>
             </div>
             <button type="button" class="btn-secondary" (click)="reloadLeaveTypes()">Retry</button>
@@ -101,7 +101,7 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
         <div class="rounded-[24px] border border-warning/20 bg-warning/5 px-5 py-4">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p class="text-sm font-semibold text-ui-text">Leave summary is partially unavailable</p>
+              <p class="text-sm font-semibold text-ui-text">Some summary numbers can't be shown yet</p>
               <p class="mt-1 text-sm text-ui-muted">{{ store.summaryError() }}</p>
             </div>
             <button type="button" class="btn-secondary" (click)="reloadSummary()">Retry</button>
@@ -224,7 +224,7 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
       @if (store.listError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Leave requests are unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Leave requests can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.listError() }}</p>
           </div>
           <button type="button" class="btn-secondary" (click)="reload()">Retry</button>
@@ -242,9 +242,7 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
         <div class="state-panel">
           <div>
             <p class="text-base font-semibold text-ui-text">No leave requests found</p>
-            <p class="mt-2 text-sm text-ui-muted">
-              Adjust the filters or create a new leave request to continue.
-            </p>
+            <p class="mt-2 text-sm text-ui-muted">Try another filter or add a leave request.</p>
           </div>
           <button type="button" class="btn-primary" (click)="openCreate()">Add leave request</button>
         </div>
@@ -286,7 +284,7 @@ import { LeaveTableComponent } from '../../ui/leave-table/leave-table.component'
                     rows="4"
                     class="field-shell min-h-28 resize-y"
                     [formControl]="rejectionReasonControl"
-                    placeholder="Add the reason for rejecting this request"
+                    placeholder="Add a reason for rejection"
                   ></textarea>
                   @if (rejectionReasonControl.touched && rejectionReasonControl.invalid) {
                     <p class="field-error">Rejection note is required.</p>
@@ -351,7 +349,7 @@ export class LeaveListComponent {
       {
         label: 'Total requests',
         value: this.store.isListLoading() ? '...' : String(summary.totalRequests),
-        delta: 'Across the current leave request list',
+        delta: 'Shown in the current list',
         barClass: 'bg-brand-blue',
         deltaClass: 'text-brand-blue',
       },
@@ -365,14 +363,14 @@ export class LeaveListComponent {
       {
         label: 'Approved requests',
         value: isLoading ? '...' : String(summary.approvedRequests),
-        delta: 'Approved by HR',
+        delta: 'Already approved',
         barClass: 'bg-brand-green',
         deltaClass: 'text-brand-green',
       },
       {
         label: 'Rejected requests',
         value: isLoading ? '...' : String(summary.rejectedRequests),
-        delta: 'Rejected after review',
+        delta: 'Not approved',
         barClass: 'bg-danger',
         deltaClass: 'text-danger',
       },
@@ -444,10 +442,10 @@ export class LeaveListComponent {
       const navigated = await this.router.navigate(['/leave', 'new']);
 
       if (!navigated) {
-        this.navigationError.set('The add leave request page could not be opened. Please try again.');
+        this.navigationError.set("The leave request form couldn't be opened. Please try again.");
       }
     } catch {
-      this.navigationError.set('The add leave request page could not be opened. Please try again.');
+      this.navigationError.set("The leave request form couldn't be opened. Please try again.");
     }
   }
 

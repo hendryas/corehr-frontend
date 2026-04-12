@@ -14,10 +14,10 @@ import { EmployeeRecord } from '../../../../core/models/dashboard.model';
       <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 class="text-xl font-bold text-ui-text">Recent employees</h2>
-          <p class="mt-1 muted-copy">Starter dataset for onboarding, location, and current employee status.</p>
+          <p class="mt-1 muted-copy">See the latest employee records, work details, and current status.</p>
         </div>
         <span flowbiteBadge color="primary" pill class="!rounded-full !px-3 !py-1.5">
-          {{ employees().length }} team members
+          {{ employees().length }} employees
         </span>
       </div>
 

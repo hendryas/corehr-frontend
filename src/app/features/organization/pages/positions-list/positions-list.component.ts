@@ -115,7 +115,7 @@ import { PositionsTableComponent } from '../../ui/positions-table/positions-tabl
       @if (store.positionsError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Positions are unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Positions can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.positionsError() }}</p>
           </div>
           <button type="button" class="btn-secondary" (click)="reload()">Retry</button>
@@ -133,9 +133,7 @@ import { PositionsTableComponent } from '../../ui/positions-table/positions-tabl
         <div class="state-panel">
           <div>
             <p class="text-base font-semibold text-ui-text">No positions found</p>
-            <p class="mt-2 text-sm text-ui-muted">
-              Adjust the search term or add a new position to continue.
-            </p>
+            <p class="mt-2 text-sm text-ui-muted">Try another search or add a position.</p>
           </div>
           <button type="button" class="btn-primary" (click)="openCreate()">Add position</button>
         </div>
@@ -161,7 +159,7 @@ import { PositionsTableComponent } from '../../ui/positions-table/positions-tabl
                 <p class="mt-1 text-sm text-ui-muted">{{ pendingDelete()?.departmentName }}</p>
               </div>
               <p class="text-xs leading-5 text-ui-muted">
-                Please make sure this position is no longer assigned to active employees before continuing.
+                Make sure this position is no longer assigned before continuing.
               </p>
             </div>
             <div flowbiteModalFooter class="!justify-end !border-ui-border">

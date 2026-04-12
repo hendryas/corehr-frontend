@@ -23,7 +23,7 @@ export const organizationRoutes: Routes = [
         data: {
           eyebrow: 'Organization',
           title: 'Departments',
-          description: 'Manage department master data used across employees and other HR modules.',
+          description: 'See and manage the department list used across CoreHR.',
         },
         loadComponent: () =>
           import('./pages/departments-list/departments-list.component').then(
@@ -36,7 +36,7 @@ export const organizationRoutes: Routes = [
         data: {
           eyebrow: 'Organization',
           title: 'Add department',
-          description: 'Create a new department and keep the organization structure up to date.',
+          description: 'Add a department so it can be used in employee records.',
         },
         loadComponent: () =>
           import('./pages/department-create/department-create.component').then(
@@ -49,7 +49,7 @@ export const organizationRoutes: Routes = [
         data: {
           eyebrow: 'Organization',
           title: 'Edit department',
-          description: 'Update department details used across the organization master data.',
+          description: 'Update department details and keep the list up to date.',
         },
         loadComponent: () =>
           import('./pages/department-edit/department-edit.component').then(
@@ -62,7 +62,7 @@ export const organizationRoutes: Routes = [
         data: {
           eyebrow: 'Organization',
           title: 'Positions',
-          description: 'Manage position master data and their department assignments.',
+          description: 'See and manage the position list used across CoreHR.',
         },
         loadComponent: () =>
           import('./pages/positions-list/positions-list.component').then(
@@ -75,7 +75,7 @@ export const organizationRoutes: Routes = [
         data: {
           eyebrow: 'Organization',
           title: 'Add position',
-          description: 'Create a new position and assign it to the correct department.',
+          description: 'Add a position and link it to the right department.',
         },
         loadComponent: () =>
           import('./pages/position-create/position-create.component').then(
@@ -88,7 +88,7 @@ export const organizationRoutes: Routes = [
         data: {
           eyebrow: 'Organization',
           title: 'Edit position',
-          description: 'Update position details and keep department assignments aligned.',
+          description: 'Update position details and department information.',
         },
         loadComponent: () =>
           import('./pages/position-edit/position-edit.component').then(
@@ -101,7 +101,7 @@ export const organizationRoutes: Routes = [
         data: {
           eyebrow: 'Organization',
           title: 'Leave types',
-          description: 'Manage leave type master data used by leave requests and approvals.',
+          description: 'See and manage the leave options used in leave requests.',
         },
         loadComponent: () =>
           import('./pages/leave-types-list/leave-types-list.component').then(
@@ -114,7 +114,7 @@ export const organizationRoutes: Routes = [
         data: {
           eyebrow: 'Organization',
           title: 'Add leave type',
-          description: 'Create a new leave type and keep leave request options up to date.',
+          description: 'Add a leave type so it can be used in leave requests.',
         },
         loadComponent: () =>
           import('./pages/leave-type-create/leave-type-create.component').then(
@@ -127,7 +127,7 @@ export const organizationRoutes: Routes = [
         data: {
           eyebrow: 'Organization',
           title: 'Edit leave type',
-          description: 'Update the leave type label, code, and description used in leave requests.',
+          description: 'Update the leave type name, code, and description.',
         },
         loadComponent: () =>
           import('./pages/leave-type-edit/leave-type-edit.component').then(

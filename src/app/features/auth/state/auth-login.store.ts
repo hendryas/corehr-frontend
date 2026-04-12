@@ -42,7 +42,7 @@ export class AuthLoginStore {
 
       if (!navigated) {
         this.errorMessage.set(
-          'Login berhasil, tetapi halaman tujuan tidak dapat dibuka. Silakan coba lagi.',
+          "You're signed in, but the next page couldn't be opened. Please try again.",
         );
       }
 
@@ -74,6 +74,6 @@ export class AuthLoginStore {
       }
     }
 
-    return 'Login gagal. Pastikan backend berjalan dan kredensial benar.';
+    return 'Sign-in failed. Check your email and password, then try again.';
   }
 }

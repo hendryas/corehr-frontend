@@ -25,8 +25,8 @@ import { EmployeeFormGroup } from './employee-form.utils';
 
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
-          <h2 class="text-xl font-bold text-ui-text">Account information</h2>
-          <p class="mt-1 muted-copy">Enter the main identity details for this employee.</p>
+          <h2 class="text-xl font-bold text-ui-text">Basic information</h2>
+          <p class="mt-1 muted-copy">Enter the main details for this employee.</p>
         </div>
 
         <div class="mt-5 grid gap-5 md:grid-cols-2">
@@ -34,7 +34,7 @@ import { EmployeeFormGroup } from './employee-form.utils';
             <label class="field-label" for="employeeCode">Employee code</label>
             <input id="employeeCode" type="text" class="field-shell" formControlName="employeeCode" placeholder="EMP004" />
             @if (isEmployeeCodeLoading()) {
-              <p class="text-xs text-ui-muted">Preparing the latest employee code...</p>
+              <p class="text-xs text-ui-muted">Preparing employee code...</p>
             } @else if (employeeCodeStatusMessage()) {
               <p
                 class="text-xs"
@@ -92,7 +92,7 @@ import { EmployeeFormGroup } from './employee-form.utils';
             </div>
 
             <p class="text-xs text-ui-muted">
-              {{ mode() === 'create' ? 'Required when creating a new employee.' : 'Leave blank if you do not want to change the password.' }}
+              {{ mode() === 'create' ? 'Required for a new employee account.' : 'Leave blank to keep the current password.' }}
             </p>
             @if (errorFor('password')) {
               <p class="field-error">{{ errorFor('password') }}</p>
@@ -104,7 +104,7 @@ import { EmployeeFormGroup } from './employee-form.utils';
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
           <h2 class="text-xl font-bold text-ui-text">Personal information</h2>
-          <p class="mt-1 muted-copy">Add contact and personal details if needed.</p>
+          <p class="mt-1 muted-copy">Add contact details if needed.</p>
         </div>
 
         <div class="mt-5 grid gap-5 md:grid-cols-2">
@@ -147,8 +147,8 @@ import { EmployeeFormGroup } from './employee-form.utils';
 
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
-          <h2 class="text-xl font-bold text-ui-text">Work assignment</h2>
-          <p class="mt-1 muted-copy">Set the employee role, department, position, and employment status.</p>
+          <h2 class="text-xl font-bold text-ui-text">Work details</h2>
+          <p class="mt-1 muted-copy">Set the role, department, position, and employment status.</p>
         </div>
 
         <div class="mt-5 grid gap-5 md:grid-cols-2">
@@ -207,7 +207,7 @@ import { EmployeeFormGroup } from './employee-form.utils';
               }
             </select>
             @if (!form().controls.departmentId.value) {
-              <p class="text-xs text-ui-muted">Choose a department first to see the available positions.</p>
+              <p class="text-xs text-ui-muted">Select a department first to see the position list.</p>
             }
             @if (errorFor('positionId')) {
               <p class="field-error">{{ errorFor('positionId') }}</p>

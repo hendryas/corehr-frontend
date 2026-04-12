@@ -105,7 +105,7 @@ import { DepartmentsTableComponent } from '../../ui/departments-table/department
       @if (store.departmentsError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Departments are unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Departments can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.departmentsError() }}</p>
           </div>
           <button type="button" class="btn-secondary" (click)="reload()">Retry</button>
@@ -123,9 +123,7 @@ import { DepartmentsTableComponent } from '../../ui/departments-table/department
         <div class="state-panel">
           <div>
             <p class="text-base font-semibold text-ui-text">No departments found</p>
-            <p class="mt-2 text-sm text-ui-muted">
-              Adjust the search term or add a new department to continue.
-            </p>
+            <p class="mt-2 text-sm text-ui-muted">Try another search or add a department.</p>
           </div>
           <button type="button" class="btn-primary" (click)="openCreate()">Add department</button>
         </div>
@@ -144,14 +142,14 @@ import { DepartmentsTableComponent } from '../../ui/departments-table/department
             <h3 flowbiteModalHeader class="!border-ui-border !text-ui-text">Delete department</h3>
             <div flowbiteModalContent class="!space-y-4">
               <p class="muted-copy">
-                This will remove <strong>{{ pendingDelete()?.name }}</strong> from the organization structure.
+                This will remove <strong>{{ pendingDelete()?.name }}</strong> from the department list.
               </p>
               <div class="rounded-[22px] border border-danger/15 bg-danger/5 px-4 py-4">
                 <p class="text-sm font-semibold text-ui-text">{{ pendingDelete()?.name }}</p>
                 <p class="mt-1 text-sm text-ui-muted">{{ pendingDelete()?.descriptionLabel }}</p>
               </div>
               <p class="text-xs leading-5 text-ui-muted">
-                Please make sure this department is no longer being used before continuing.
+                Make sure this department is no longer being used before continuing.
               </p>
             </div>
             <div flowbiteModalFooter class="!justify-end !border-ui-border">

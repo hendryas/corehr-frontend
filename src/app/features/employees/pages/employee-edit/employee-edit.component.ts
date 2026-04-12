@@ -18,7 +18,7 @@ import {
       @if (store.detailError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Employee information is unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Employee data can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.detailError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -38,11 +38,9 @@ import {
         <div class="surface-card p-6">
           <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-blue">Employee update</p>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-blue">Edit employee details</p>
               <h2 class="mt-2 text-2xl font-bold text-ui-text">Edit {{ employee.fullName }}</h2>
-              <p class="mt-2 muted-copy">
-                Update the employee information below as needed.
-              </p>
+              <p class="mt-2 muted-copy">Update the information below if anything has changed.</p>
             </div>
             <div class="flex flex-wrap gap-3">
               <a [routerLink]="['/employees', employee.id]" class="btn-secondary">Back to detail</a>
@@ -54,7 +52,7 @@ import {
         @if (store.referenceError()) {
           <div class="state-panel border-warning/25 bg-warning/5">
             <div>
-              <p class="text-base font-semibold text-ui-text">Some form options are unavailable</p>
+              <p class="text-base font-semibold text-ui-text">Some options can't be shown yet</p>
               <p class="mt-2 text-sm text-ui-muted">{{ store.referenceError() }}</p>
             </div>
             <button type="button" class="btn-secondary" (click)="reloadReferenceData()">Retry</button>

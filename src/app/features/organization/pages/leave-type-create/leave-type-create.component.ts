@@ -18,7 +18,7 @@ import {
         <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 class="text-2xl font-bold text-ui-text">Add leave type</h2>
-            <p class="mt-1 muted-copy">Create a leave type that can be used in leave request forms.</p>
+            <p class="mt-1 muted-copy">Fill in the details below to add a leave type.</p>
           </div>
           <a routerLink="/organization/leave-types" class="btn-secondary">Back to leave types</a>
         </div>

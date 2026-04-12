@@ -143,9 +143,9 @@ export class AttendanceStore {
     if (blockedMessage) {
       return {
         action: 'unavailable',
-        title: 'Check in unavailable',
+        title: 'Check-in is not available',
         description: blockedMessage,
-        actionLabel: 'Check in unavailable',
+        actionLabel: 'Check-in unavailable',
       };
     }
 
@@ -162,8 +162,7 @@ export class AttendanceStore {
       return {
         action: 'check-out',
         title: 'Ready to check out',
-        description:
-          'You already checked in today. Complete today attendance when you are ready to end the session.',
+        description: "You already checked in today. Check out when you're ready to finish work.",
         actionLabel: 'Check out',
       };
     }
@@ -171,18 +170,18 @@ export class AttendanceStore {
     if (attendance.checkOut) {
       return {
         action: 'completed',
-        title: 'Attendance completed',
+        title: 'Attendance is complete',
         description: 'Your attendance for today is complete. No further action is needed.',
-        actionLabel: 'Attendance completed',
+        actionLabel: 'Attendance complete',
       };
     }
 
     return {
       action: 'unavailable',
-      title: 'Attendance action unavailable',
+      title: 'Attendance is already recorded',
       description:
-        'Today attendance already exists with a non-working status. Please contact HR if this needs adjustment.',
-      actionLabel: 'Attendance completed',
+        "Today's attendance already has a non-working status. Contact HR if you need help.",
+      actionLabel: 'Attendance complete',
     };
   });
 
@@ -227,7 +226,7 @@ export class AttendanceStore {
       this.listError.set(
         getApiErrorMessage(
           error,
-          'Attendance information is unavailable right now. Please try again.',
+          "Attendance data can't be shown right now. Please try again.",
         ),
       );
     } finally {
@@ -256,7 +255,7 @@ export class AttendanceStore {
       }));
     } catch (error) {
       this.summaryError.set(
-        getApiErrorMessage(error, 'Today attendance summary could not be loaded.'),
+        getApiErrorMessage(error, "Today's summary can't be shown right now."),
       );
     } finally {
       this.isSummaryLoading.set(false);
@@ -277,7 +276,7 @@ export class AttendanceStore {
       this.detailRecord.set(attendance);
     } catch (error) {
       this.detailError.set(
-        getApiErrorMessage(error, 'Attendance detail could not be loaded right now.'),
+        getApiErrorMessage(error, "Attendance details can't be shown right now."),
       );
     } finally {
       this.isDetailLoading.set(false);
@@ -290,7 +289,7 @@ export class AttendanceStore {
     if (!authenticatedUser) {
       this.todayAttendanceRecord.set(null);
       this.todayAttendanceBlockedMessage.set(null);
-      this.todayAttendanceError.set('Your session is unavailable. Please sign in again.');
+      this.todayAttendanceError.set('Your session has ended. Please sign in again.');
       return;
     }
 
@@ -315,7 +314,7 @@ export class AttendanceStore {
     } catch (error) {
       this.todayAttendanceRecord.set(null);
       this.todayAttendanceError.set(
-        getApiErrorMessage(error, 'Today attendance status could not be loaded right now.'),
+        getApiErrorMessage(error, "Today's attendance can't be shown right now."),
       );
     } finally {
       this.isTodayAttendanceLoading.set(false);
@@ -344,7 +343,7 @@ export class AttendanceStore {
     } catch (error) {
       if (showError) {
         this.referenceError.set(
-          getApiErrorMessage(error, 'Employee options could not be loaded.'),
+          getApiErrorMessage(error, "Employee list can't be shown yet."),
         );
       }
     } finally {
@@ -370,7 +369,7 @@ export class AttendanceStore {
       this.showDeleteSuccessMessage(apiMessage);
       return true;
     } catch (error) {
-      this.deleteError.set(getApiErrorMessage(error, 'Attendance entry could not be removed.'));
+      this.deleteError.set(getApiErrorMessage(error, "The attendance record couldn't be deleted."));
       return false;
     } finally {
       this.deletingAttendanceId.set(null);
@@ -389,7 +388,7 @@ export class AttendanceStore {
       this.exportError.set(
         getApiErrorMessage(
           error,
-          'Attendance CSV could not be exported right now. Please try again.',
+          "The attendance CSV couldn't be downloaded right now. Please try again.",
         ),
       );
       return false;
@@ -402,7 +401,7 @@ export class AttendanceStore {
     const authenticatedUser = this.authenticatedUser();
 
     if (!authenticatedUser) {
-      this.todayAttendanceSubmitError.set('Your session is unavailable. Please sign in again.');
+      this.todayAttendanceSubmitError.set('Your session has ended. Please sign in again.');
       return false;
     }
 
@@ -431,7 +430,7 @@ export class AttendanceStore {
 
       return true;
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error, 'Today attendance action could not be completed.');
+      const errorMessage = getApiErrorMessage(error, "Today's attendance couldn't be updated.");
       this.todayAttendanceSubmitError.set(errorMessage);
 
       if (isApprovedLeaveCheckInConflict(errorMessage)) {
@@ -528,7 +527,7 @@ export class AttendanceStore {
   }
 
   private handleSubmitError(error: unknown): void {
-    const submitError = getApiErrorMessage(error, 'Changes could not be saved.');
+    const submitError = getApiErrorMessage(error, "Your changes couldn't be saved.");
     this.submitError.set(submitError);
 
     if (error instanceof HttpErrorResponse) {

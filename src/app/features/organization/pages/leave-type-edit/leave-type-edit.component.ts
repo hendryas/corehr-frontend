@@ -18,7 +18,7 @@ import {
       @if (store.leaveTypeDetailError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Leave type detail could not be loaded</p>
+            <p class="text-base font-semibold text-ui-text">Leave type details can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.leaveTypeDetailError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -31,7 +31,7 @@ import {
           <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 class="text-2xl font-bold text-ui-text">Edit leave type</h2>
-              <p class="mt-1 muted-copy">Update the leave type details used across leave requests.</p>
+              <p class="mt-1 muted-copy">Update the leave type details if anything has changed.</p>
             </div>
             <a routerLink="/organization/leave-types" class="btn-secondary">Back to leave types</a>
           </div>

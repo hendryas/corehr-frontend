@@ -10,7 +10,7 @@ import { LeaveTypeListItem } from '../../../leave/domain/models/leave-type.model
       <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 class="text-xl font-bold text-ui-text">Leave types</h2>
-          <p class="mt-1 muted-copy">Manage the master leave types used in leave requests and approvals.</p>
+          <p class="mt-1 muted-copy">See the leave options used in leave requests.</p>
         </div>
         <div class="rounded-2xl border border-brand-blue/15 bg-brand-blue/6 px-4 py-3 text-sm font-semibold text-brand-blue">
           {{ leaveTypes().length }} leave types

@@ -10,7 +10,7 @@ import { PositionListItem } from '../../domain/models/organization.model';
       <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 class="text-xl font-bold text-ui-text">Positions</h2>
-          <p class="mt-1 muted-copy">Manage position records and their department assignments.</p>
+          <p class="mt-1 muted-copy">See positions and the department linked to each one.</p>
         </div>
         <div class="rounded-2xl border border-brand-blue/15 bg-brand-blue/6 px-4 py-3 text-sm font-semibold text-brand-blue">
           {{ positions().length }} positions

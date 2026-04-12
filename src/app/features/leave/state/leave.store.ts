@@ -175,7 +175,7 @@ export class LeaveStore {
       });
       this.summary.update((state) => ({ ...state, totalRequests: 0 }));
       this.listError.set(
-        getApiErrorMessage(error, 'Leave information is unavailable right now. Please try again.'),
+        getApiErrorMessage(error, "Leave requests can't be shown right now. Please try again."),
       );
     } finally {
       this.isListLoading.set(false);
@@ -201,7 +201,7 @@ export class LeaveStore {
       }));
     } catch (error) {
       this.summaryError.set(
-        getApiErrorMessage(error, 'Leave request summary could not be loaded.'),
+        getApiErrorMessage(error, "Leave summary can't be shown right now."),
       );
     } finally {
       this.isSummaryLoading.set(false);
@@ -220,7 +220,7 @@ export class LeaveStore {
       this.detailRecord.set(leave);
     } catch (error) {
       this.detailError.set(
-        getApiErrorMessage(error, 'Leave request detail could not be loaded right now.'),
+        getApiErrorMessage(error, "Leave request details can't be shown right now."),
       );
     } finally {
       this.isDetailLoading.set(false);
@@ -256,7 +256,7 @@ export class LeaveStore {
     } catch (error) {
       if (showError) {
         this.employeeOptionsError.set(
-          getApiErrorMessage(error, 'Employee options could not be loaded.'),
+          getApiErrorMessage(error, "Employee list can't be shown yet."),
         );
       }
     } finally {
@@ -283,7 +283,7 @@ export class LeaveStore {
 
       if (showError) {
         this.leaveTypesError.set(
-          getApiErrorMessage(error, 'Leave types could not be loaded.'),
+          getApiErrorMessage(error, "Leave type options can't be shown yet."),
         );
       }
     } finally {
@@ -355,7 +355,7 @@ export class LeaveStore {
       return true;
     } catch (error) {
       this.exportError.set(
-        getApiErrorMessage(error, 'Leave CSV could not be exported right now. Please try again.'),
+        getApiErrorMessage(error, "The leave CSV couldn't be downloaded right now. Please try again."),
       );
       return false;
     } finally {
@@ -459,7 +459,7 @@ export class LeaveStore {
   }
 
   private handleSubmitError(error: unknown): void {
-    this.submitError.set(getApiErrorMessage(error, 'Changes could not be saved.'));
+    this.submitError.set(getApiErrorMessage(error, "Your changes couldn't be saved."));
 
     if (error instanceof HttpErrorResponse) {
       const apiError = error.error as ApiErrorResponse | undefined;
@@ -482,10 +482,10 @@ export class LeaveStore {
     } catch (error) {
       const fallback =
         action === 'approve'
-          ? 'Leave request could not be approved.'
+          ? "This request couldn't be approved."
           : action === 'reject'
-            ? 'Leave request could not be rejected.'
-            : 'Leave request could not be removed.';
+            ? "This request couldn't be rejected."
+            : "This request couldn't be deleted.";
       this.actionError.set(getApiErrorMessage(error, fallback));
       return false;
     } finally {

@@ -47,7 +47,7 @@ import { EmployeesTableComponent } from '../../ui/employees-table/employees-tabl
             <div class="flex items-start gap-3">
               <span class="mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-success"></span>
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-semibold text-ui-text">Employee removed</p>
+                <p class="text-sm font-semibold text-ui-text">Employee deleted</p>
                 <p class="mt-1 text-sm text-ui-muted">{{ store.deleteSuccessMessage() }}</p>
               </div>
               <button
@@ -142,7 +142,7 @@ import { EmployeesTableComponent } from '../../ui/employees-table/employees-tabl
       @if (store.listError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Employee list is unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Employee data can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.listError() }}</p>
           </div>
           <button type="button" class="btn-secondary" (click)="reload()">Retry</button>
@@ -161,7 +161,7 @@ import { EmployeesTableComponent } from '../../ui/employees-table/employees-tabl
           <div>
             <p class="text-base font-semibold text-ui-text">No employees found</p>
             <p class="mt-2 text-sm text-ui-muted">
-              Adjust the search term or status filter, or add a new employee record to get started.
+              Try another search or status filter, or add a new employee.
             </p>
           </div>
           <button type="button" class="btn-primary" (click)="openCreate()">Add employee</button>
@@ -191,7 +191,7 @@ import { EmployeesTableComponent } from '../../ui/employees-table/employees-tabl
                 <p class="mt-1 text-sm text-ui-muted">{{ pendingDelete()?.email }}</p>
               </div>
               <p class="text-xs leading-5 text-ui-muted">
-                Please make sure this is the correct employee before continuing.
+                Make sure you selected the right employee before continuing.
               </p>
             </div>
             <div flowbiteModalFooter class="!justify-end !border-ui-border">
@@ -265,10 +265,10 @@ export class EmployeeListComponent {
       const navigated = await this.router.navigate(['/employees', 'new']);
 
       if (!navigated) {
-        this.navigationError.set('The add employee page could not be opened. Please try again.');
+        this.navigationError.set("The employee form couldn't be opened. Please try again.");
       }
     } catch {
-      this.navigationError.set('The add employee page could not be opened. Please try again.');
+      this.navigationError.set("The employee form couldn't be opened. Please try again.");
     }
   }
 

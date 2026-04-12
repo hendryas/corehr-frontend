@@ -46,13 +46,13 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
         <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div class="space-y-3">
             <div>
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-blue">Today attendance</p>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-blue">Today's attendance</p>
               <h2 class="mt-2 text-2xl font-bold text-ui-text">{{ store.todayAttendanceState().title }}</h2>
               <p class="mt-2 muted-copy">{{ store.todayAttendanceState().description }}</p>
             </div>
 
             @if (store.isTodayAttendanceLoading()) {
-              <p class="text-sm text-ui-muted">Loading today attendance status...</p>
+              <p class="text-sm text-ui-muted">Checking today's attendance...</p>
             } @else if (store.todayAttendanceError()) {
               <div class="rounded-[20px] border border-warning/20 bg-warning/5 px-4 py-3">
                 <p class="text-sm font-medium text-warning">{{ store.todayAttendanceError() }}</p>
@@ -107,7 +107,7 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
             }
 
             <p class="text-sm text-ui-muted">
-              Personal attendance actions are validated again by the backend, including approved leave checks for today.
+              We'll check today's leave status automatically before saving attendance.
             </p>
           </div>
         </div>
@@ -119,7 +119,7 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
             <div class="flex items-start gap-3">
               <span class="mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-success"></span>
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-semibold text-ui-text">Attendance removed</p>
+                <p class="text-sm font-semibold text-ui-text">Attendance deleted</p>
                 <p class="mt-1 text-sm text-ui-muted">{{ store.deleteSuccessMessage() }}</p>
               </div>
               <button
@@ -156,7 +156,7 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
         <div class="rounded-[24px] border border-warning/20 bg-warning/5 px-5 py-4">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p class="text-sm font-semibold text-ui-text">Attendance summary is partially unavailable</p>
+              <p class="text-sm font-semibold text-ui-text">Some summary numbers can't be shown yet</p>
               <p class="mt-1 text-sm text-ui-muted">{{ store.summaryError() }}</p>
             </div>
             <button type="button" class="btn-secondary" (click)="reloadSummary()">Retry</button>
@@ -257,7 +257,7 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
       @if (store.listError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Attendance history is unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Attendance data can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.listError() }}</p>
           </div>
           <button type="button" class="btn-secondary" (click)="reload()">Retry</button>
@@ -275,9 +275,7 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
         <div class="state-panel">
           <div>
             <p class="text-base font-semibold text-ui-text">No attendance records found</p>
-            <p class="mt-2 text-sm text-ui-muted">
-              Adjust the filters or add a new attendance record to continue.
-            </p>
+            <p class="mt-2 text-sm text-ui-muted">Try another filter to see attendance records.</p>
           </div>
           @if (store.isAdmin()) {
             <button type="button" class="btn-primary" (click)="openCreate()">Add attendance</button>
@@ -309,7 +307,7 @@ import { AttendanceTableComponent } from '../../ui/attendance-table/attendance-t
                 <p class="mt-1 text-sm text-ui-muted">{{ pendingDelete()?.statusLabel }}</p>
               </div>
               <p class="text-xs leading-5 text-ui-muted">
-                Please make sure this is the correct attendance record before continuing.
+                Make sure you selected the right attendance record before continuing.
               </p>
             </div>
             <div flowbiteModalFooter class="!justify-end !border-ui-border">
@@ -353,28 +351,28 @@ export class AttendanceListComponent {
       {
         label: 'Total records',
         value: this.store.isListLoading() ? '...' : String(summary.totalRecords),
-        delta: 'Across the current attendance list',
+        delta: 'Shown in the current list',
         barClass: 'bg-brand-blue',
         deltaClass: 'text-brand-blue',
       },
       {
         label: 'Present today',
         value: isLoading ? '...' : String(summary.presentToday),
-        delta: 'Marked present for today',
+        delta: 'Checked in today',
         barClass: 'bg-brand-green',
         deltaClass: 'text-brand-green',
       },
       {
         label: 'Sick today',
         value: isLoading ? '...' : String(summary.sickToday),
-        delta: 'Marked sick for today',
+        delta: 'Marked sick today',
         barClass: 'bg-info',
         deltaClass: 'text-info',
       },
       {
         label: 'Absent today',
         value: isLoading ? '...' : String(summary.absentToday),
-        delta: 'Marked absent for today',
+        delta: 'Marked absent today',
         barClass: 'bg-brand-gold',
         deltaClass: 'text-brand-gold',
       },
@@ -428,10 +426,10 @@ export class AttendanceListComponent {
       const navigated = await this.router.navigate(['/attendance', 'new']);
 
       if (!navigated) {
-        this.navigationError.set('The add attendance page could not be opened. Please try again.');
+        this.navigationError.set("The attendance form couldn't be opened. Please try again.");
       }
     } catch {
-      this.navigationError.set('The add attendance page could not be opened. Please try again.');
+      this.navigationError.set("The attendance form couldn't be opened. Please try again.");
     }
   }
 

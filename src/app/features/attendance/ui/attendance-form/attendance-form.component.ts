@@ -24,7 +24,7 @@ import { AttendanceFormGroup } from './attendance-form.utils';
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
           <h2 class="text-xl font-bold text-ui-text">Attendance information</h2>
-          <p class="mt-1 muted-copy">Select the employee, attendance date, and the daily attendance status.</p>
+          <p class="mt-1 muted-copy">Choose the employee, date, and attendance status.</p>
         </div>
 
         <div class="mt-5 grid gap-5 md:grid-cols-2">
@@ -42,7 +42,7 @@ import { AttendanceFormGroup } from './attendance-form.utils';
               }
             </select>
             @if (!isReferenceLoading() && employeeOptions().length === 0) {
-              <p class="text-xs text-ui-muted">Employee options are not available yet.</p>
+              <p class="text-xs text-ui-muted">Employee list isn't ready yet.</p>
             }
             @if (errorFor('userId')) {
               <p class="field-error">{{ errorFor('userId') }}</p>
@@ -67,7 +67,7 @@ import { AttendanceFormGroup } from './attendance-form.utils';
             </select>
             @if (form().controls.status.value === 'present') {
               <p class="text-xs text-ui-muted">
-                Present status will be rejected if the employee has approved leave on the selected date.
+                You can't choose Present if the employee already has approved leave on that date.
               </p>
             }
             @if (errorFor('status')) {
@@ -80,7 +80,7 @@ import { AttendanceFormGroup } from './attendance-form.utils';
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
           <h2 class="text-xl font-bold text-ui-text">Check in and check out</h2>
-          <p class="mt-1 muted-copy">Add time details when they are available for the selected attendance record.</p>
+          <p class="mt-1 muted-copy">Add time details if needed.</p>
         </div>
 
         <div class="mt-5 grid gap-5 md:grid-cols-2">
@@ -105,7 +105,7 @@ import { AttendanceFormGroup } from './attendance-form.utils';
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
           <h2 class="text-xl font-bold text-ui-text">Notes</h2>
-          <p class="mt-1 muted-copy">Add context if the attendance record needs additional explanation.</p>
+          <p class="mt-1 muted-copy">Add a short note if needed.</p>
         </div>
 
         <div class="mt-5 space-y-2">

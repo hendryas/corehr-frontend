@@ -17,17 +17,15 @@ import {
       @if (!store.isAdmin()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">This page is unavailable</p>
-            <p class="mt-2 text-sm text-ui-muted">
-              Attendance creation is only available for HR administrators.
-            </p>
+            <p class="text-base font-semibold text-ui-text">You can't open this page</p>
+            <p class="mt-2 text-sm text-ui-muted">Only HR can add attendance records.</p>
           </div>
           <a routerLink="/attendance" class="btn-secondary">Back to list</a>
         </div>
       } @else if (store.referenceError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Employee options are unavailable</p>
+            <p class="text-base font-semibold text-ui-text">Employee list can't be shown yet</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.referenceError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -41,7 +39,7 @@ import {
         <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 class="text-2xl font-bold text-ui-text">Add attendance</h2>
-            <p class="mt-1 muted-copy">Create a new attendance record and complete the attendance details.</p>
+            <p class="mt-1 muted-copy">Fill in the attendance details below.</p>
           </div>
           <a routerLink="/attendance" class="btn-secondary">Back to list</a>
         </div>

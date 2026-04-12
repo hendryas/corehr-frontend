@@ -7,15 +7,8 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NgpDialogTrigger } from 'ng-primitives/dialog';
+import { RouterLink } from '@angular/router';
 import { Badge } from 'flowbite-angular/badge';
-import {
-  Modal,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from 'flowbite-angular/modal';
 import { APP_SHELL } from '../../../../core/constants/app-shell.constants';
 import {
   DashboardStat,
@@ -34,13 +27,8 @@ import { catchError, forkJoin, of } from 'rxjs';
   selector: 'app-dashboard-home',
   standalone: true,
   imports: [
-    NgpDialogTrigger,
+    RouterLink,
     Badge,
-    Modal,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
     AppIconComponent,
     StatCardComponent,
     RecentEmployeesTableComponent,
@@ -53,28 +41,28 @@ import { catchError, forkJoin, of } from 'rxjs';
         <div class="relative flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
           <div class="space-y-4">
             <div class="flex flex-wrap items-center gap-3">
-              <span flowbiteBadge color="primary" pill class="!rounded-full !px-3 !py-1.5">Live overview</span>
+              <span flowbiteBadge color="primary" pill class="!rounded-full !px-3 !py-1.5">Overview</span>
               <span
                 flowbiteBadge
                 [color]="loadError() ? 'warning' : 'success'"
                 pill
                 class="!rounded-full !px-3 !py-1.5"
               >
-                {{ isLoading() ? 'Syncing backend' : loadError() ? 'Connection issue' : 'Backend connected' }}
+                {{ isLoading() ? 'Updating data' : loadError() ? 'Need attention' : 'Data is ready' }}
               </span>
             </div>
             <div>
               <h2 class="text-3xl font-bold text-ui-text">Welcome back to {{ brandName }}</h2>
               <p class="mt-3 max-w-3xl muted-copy">
-                This dashboard now reads live summary data from the CoreHR backend while keeping the same admin shell and reusable UI components.
+                Review employee totals, attendance, leave requests, and organization updates from one dashboard.
               </p>
             </div>
           </div>
 
           <div class="surface-card max-w-sm px-5 py-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ui-muted">Backend target</p>
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ui-muted">Today at a glance</p>
             <p class="mt-2 text-base font-semibold text-ui-text">
-              Dashboard stats and employee list now come from the live CoreHR API.
+              Use this page to monitor key HR activity and open the section you need next.
             </p>
           </div>
         </div>
@@ -84,7 +72,7 @@ import { catchError, forkJoin, of } from 'rxjs';
         <div class="rounded-[28px] border border-warning/20 bg-warning/5 px-5 py-4">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p class="text-sm font-semibold text-ui-text">Backend sync failed</p>
+              <p class="text-sm font-semibold text-ui-text">Data could not be loaded</p>
               <p class="mt-1 text-sm text-ui-muted">{{ loadError() }}</p>
             </div>
             <button type="button" class="btn-secondary" (click)="loadDashboard()">Retry</button>
@@ -102,7 +90,7 @@ import { catchError, forkJoin, of } from 'rxjs';
         <div class="grid gap-4">
           @if (employeeListWarning()) {
             <div class="rounded-[28px] border border-warning/20 bg-warning/5 px-5 py-4">
-              <p class="text-sm font-semibold text-ui-text">Employee list unavailable</p>
+              <p class="text-sm font-semibold text-ui-text">Employee list is temporarily unavailable</p>
               <p class="mt-1 text-sm text-ui-muted">{{ employeeListWarning() }}</p>
             </div>
           }
@@ -113,76 +101,25 @@ import { catchError, forkJoin, of } from 'rxjs';
         <aside class="surface-card p-6">
           <div class="mb-6">
             <h2 class="text-xl font-bold text-ui-text">Quick actions</h2>
-            <p class="mt-1 muted-copy">Small shortcuts while the admin dashboard starts using live CoreHR data.</p>
+            <p class="mt-1 muted-copy">Open the section you need most often without leaving the dashboard.</p>
           </div>
 
           <div class="space-y-3">
             @for (action of quickActions; track action.title) {
-              @if (action.kind === 'modal') {
-                <button
-                  type="button"
-                  class="group flex w-full items-start gap-4 rounded-[24px] border border-ui-border bg-ui-surface px-4 py-4 text-left transition hover:border-brand-blue/25 hover:bg-brand-blue/5"
-                  [ngpDialogTrigger]="announcementDialog"
-                >
-                  <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-blue/12 text-brand-blue">
-                    <app-icon [name]="action.icon" iconClass="h-5 w-5" />
-                  </span>
-                  <span class="flex-1">
-                    <span class="block font-semibold text-ui-text">{{ action.title }}</span>
-                    <span class="mt-1 block text-sm text-ui-muted">{{ action.description }}</span>
-                  </span>
-                </button>
-              } @else {
-                <button
-                  type="button"
-                  class="group flex w-full items-start gap-4 rounded-[24px] border border-ui-border bg-ui-surface px-4 py-4 text-left transition hover:border-brand-blue/25 hover:bg-brand-blue/5"
-                >
-                  <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-green/12 text-brand-green">
-                    <app-icon [name]="action.icon" iconClass="h-5 w-5" />
-                  </span>
-                  <span class="flex-1">
-                    <span class="block font-semibold text-ui-text">{{ action.title }}</span>
-                    <span class="mt-1 block text-sm text-ui-muted">{{ action.description }}</span>
-                  </span>
-                </button>
-              }
+              <a
+                [routerLink]="action.route"
+                class="group flex w-full items-start gap-4 rounded-[24px] border border-ui-border bg-ui-surface px-4 py-4 text-left transition hover:border-brand-blue/25 hover:bg-brand-blue/5"
+              >
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-blue/12 text-brand-blue">
+                  <app-icon [name]="action.icon" iconClass="h-5 w-5" />
+                </span>
+                <span class="flex-1">
+                  <span class="block font-semibold text-ui-text">{{ action.title }}</span>
+                  <span class="mt-1 block text-sm text-ui-muted">{{ action.description }}</span>
+                </span>
+              </a>
             }
           </div>
-
-          <ng-template #announcementDialog let-close="close">
-            <div flowbiteModalOverlay position="center">
-              <section flowbiteModal size="lg" class="!border !border-ui-border !bg-ui-surface">
-                <h3 flowbiteModalHeader class="!border-ui-border !text-ui-text">Create internal announcement</h3>
-                <div flowbiteModalContent class="!space-y-5">
-                  <p class="muted-copy">
-                    This is a dummy modal to confirm Flowbite Angular is configured and ready for interactive UI patterns.
-                  </p>
-
-                  <div class="grid gap-4 sm:grid-cols-2">
-                    <div class="rounded-3xl border border-ui-border bg-ui-bg p-4">
-                      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Draft target</p>
-                      <p class="mt-2 text-lg font-semibold text-ui-text">All employees</p>
-                    </div>
-                    <div class="rounded-3xl border border-ui-border bg-ui-bg p-4">
-                      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ui-muted">Delivery channel</p>
-                      <p class="mt-2 text-lg font-semibold text-ui-text">Portal banner</p>
-                    </div>
-                  </div>
-
-                  <div class="rounded-3xl border border-brand-gold/20 bg-brand-gold/8 p-4">
-                    <p class="text-sm font-semibold text-ui-text">Backend note</p>
-                    <p class="mt-2 text-sm leading-6 text-ui-muted">
-                      Later this modal can be connected to a real create-announcement API or a global notification workflow.
-                    </p>
-                  </div>
-                </div>
-                <div flowbiteModalFooter class="!justify-end !border-ui-border">
-                  <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
-                  <button type="button" class="btn-primary" (click)="close()">Save draft</button>
-                </div>
-              </section>
-            </div>
-          </ng-template>
         </aside>
       </div>
     </section>
@@ -208,25 +145,25 @@ export class DashboardHomeComponent {
 
   protected readonly quickActions: QuickAction[] = [
     {
-      title: 'Create announcement',
-      description: 'Open a branded modal pattern for future internal comms.',
-      actionLabel: 'Open modal',
-      icon: 'announcement',
-      kind: 'modal',
+      title: 'Manage employees',
+      description: 'Review employee data, roles, and work details.',
+      icon: 'employees',
+      kind: 'route',
+      route: '/employees',
     },
     {
-      title: 'Invite employee',
-      description: 'Placeholder action for employee onboarding and account creation.',
-      actionLabel: 'Prepare flow',
-      icon: 'upload',
-      kind: 'ghost',
+      title: 'Check attendance',
+      description: 'See today’s attendance records and recent activity.',
+      icon: 'attendance',
+      kind: 'route',
+      route: '/attendance',
     },
     {
-      title: 'Prepare policy brief',
-      description: 'Starter card for upcoming HR compliance and handbook updates.',
-      actionLabel: 'View draft',
-      icon: 'briefcase',
-      kind: 'ghost',
+      title: 'Review leave requests',
+      description: 'Open leave submissions, approvals, and request history.',
+      icon: 'leave',
+      kind: 'route',
+      route: '/leave',
     },
   ];
 
@@ -266,10 +203,10 @@ export class DashboardHomeComponent {
 
   private buildLoadingStats(value = '...'): DashboardStat[] {
     return [
-      { label: 'Total Employees', value, delta: 'Waiting for backend sync', accent: 'blue', icon: 'employees' },
-      { label: 'Present Today', value, delta: 'Attendance summary will appear here', accent: 'green', icon: 'attendance' },
-      { label: 'Pending Leaves', value, delta: 'Leave request review count will appear here', accent: 'gold', icon: 'leave' },
-      { label: 'Departments', value, delta: 'Department and position totals will appear here', accent: 'info', icon: 'briefcase' },
+      { label: 'Total Employees', value, delta: 'Employee totals will appear here', accent: 'blue', icon: 'employees' },
+      { label: 'Present Today', value, delta: 'Attendance updates will appear here', accent: 'green', icon: 'attendance' },
+      { label: 'Pending Leaves', value, delta: 'Leave requests waiting for review will appear here', accent: 'gold', icon: 'leave' },
+      { label: 'Departments', value, delta: 'Department totals will appear here', accent: 'info', icon: 'briefcase' },
     ];
   }
 
@@ -285,7 +222,7 @@ export class DashboardHomeComponent {
       {
         label: 'Present Today',
         value: String(stats.totalAttendancesToday),
-        delta: `${stats.totalApprovedLeaves} approved leaves`,
+        delta: `${stats.totalApprovedLeaves} approved leave records`,
         accent: 'green',
         icon: 'attendance',
       },
@@ -299,7 +236,7 @@ export class DashboardHomeComponent {
       {
         label: 'Departments',
         value: String(stats.totalDepartments),
-        delta: `${stats.totalPositions} tracked positions`,
+        delta: `${stats.totalPositions} positions available`,
         accent: 'info',
         icon: 'briefcase',
       },
@@ -312,7 +249,7 @@ export class DashboardHomeComponent {
       name: employee.fullName,
       role: employee.positionName ?? this.formatRole(employee.role),
       department: employee.departmentName ?? 'Unassigned',
-      location: employee.address ?? 'Not provided',
+      location: employee.address ?? 'No address yet',
       status: employee.isActive ? 'Active' : 'Inactive',
       startDate: this.formatDate(employee.hireDate),
     };
@@ -320,7 +257,7 @@ export class DashboardHomeComponent {
 
   private formatDate(value: string | null): string {
     if (!value) {
-      return 'Not set';
+      return 'Not available';
     }
 
     const parsedDate = new Date(value);
@@ -341,6 +278,6 @@ export class DashboardHomeComponent {
       }
     }
 
-    return 'Backend belum merespons atau konfigurasi API belum sesuai.';
+    return 'Please try again in a moment. If the problem continues, check the server connection.';
   }
 }

@@ -16,7 +16,7 @@ import { EmployeeStatusBadgeComponent } from '../employee-status-badge/employee-
       <div class="flex flex-col gap-4 border-b border-ui-border pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 class="text-xl font-bold text-ui-text">Employee list</h2>
-          <p class="mt-1 muted-copy">View and manage employee information from one page.</p>
+          <p class="mt-1 muted-copy">See employee details and status in one place.</p>
         </div>
         <div class="rounded-2xl border border-brand-blue/15 bg-brand-blue/6 px-4 py-3 text-sm font-semibold text-brand-blue">
           {{ pagination().total }} total employees
@@ -77,7 +77,7 @@ import { EmployeeStatusBadgeComponent } from '../employee-status-badge/employee-
                 <td class="rounded-r-2xl border-y border-r border-ui-border bg-ui-surface px-4 py-4">
                   <div class="flex flex-wrap gap-3">
                     <button type="button" class="table-action text-brand-blue" (click)="viewEmployee.emit(employee.id)">
-                      View detail
+                      View
                     </button>
                     <button type="button" class="table-action text-ui-text" (click)="editEmployee.emit(employee.id)">
                       Edit
@@ -131,7 +131,7 @@ import { EmployeeStatusBadgeComponent } from '../employee-status-badge/employee-
 
             <div class="mt-5 flex flex-wrap gap-3 border-t border-ui-border pt-4">
               <button type="button" class="table-action text-brand-blue" (click)="viewEmployee.emit(employee.id)">
-                View detail
+                View
               </button>
               <button type="button" class="table-action text-ui-text" (click)="editEmployee.emit(employee.id)">
                 Edit

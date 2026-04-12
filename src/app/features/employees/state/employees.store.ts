@@ -106,7 +106,7 @@ export class EmployeesStore {
         totalPages: 0,
       });
       this.listError.set(
-        getApiErrorMessage(error, 'Employee information is unavailable right now. Please try again.'),
+        getApiErrorMessage(error, "Employee data can't be shown right now. Please try again."),
       );
     } finally {
       this.isListLoading.set(false);
@@ -123,7 +123,7 @@ export class EmployeesStore {
       this.detail.set(mapEmployeeToDetail(employee));
     } catch (error) {
       this.detailError.set(
-        getApiErrorMessage(error, 'Employee information could not be loaded right now.'),
+        getApiErrorMessage(error, "Employee details can't be shown right now."),
       );
     } finally {
       this.isDetailLoading.set(false);
@@ -148,7 +148,7 @@ export class EmployeesStore {
       this.positions.set(positions);
     } catch (error) {
       this.referenceError.set(
-        getApiErrorMessage(error, 'Department and position options could not be loaded.'),
+        getApiErrorMessage(error, "Department and position options can't be shown yet."),
       );
     } finally {
       this.isReferenceLoading.set(false);
@@ -206,7 +206,7 @@ export class EmployeesStore {
       this.employeeCodeError.set(
         getApiErrorMessage(
           error,
-          'Latest employee code could not be prepared automatically. Please verify it manually.',
+          "Employee code couldn't be prepared automatically. Please check it before saving.",
         ),
       );
     } finally {
@@ -229,7 +229,7 @@ export class EmployeesStore {
       return true;
     } catch (error) {
       this.deleteError.set(
-        getApiErrorMessage(error, 'Employee could not be removed.'),
+        getApiErrorMessage(error, "The employee couldn't be deleted."),
       );
       return false;
     } finally {
@@ -247,7 +247,7 @@ export class EmployeesStore {
       return true;
     } catch (error) {
       this.exportError.set(
-        getApiErrorMessage(error, 'Employee CSV could not be exported right now. Please try again.'),
+        getApiErrorMessage(error, "The employee CSV couldn't be downloaded right now. Please try again."),
       );
       return false;
     } finally {
@@ -326,7 +326,7 @@ export class EmployeesStore {
 
   private handleSubmitError(error: unknown): void {
     this.submitError.set(
-      getApiErrorMessage(error, 'Changes could not be saved.'),
+      getApiErrorMessage(error, "Your changes couldn't be saved."),
     );
 
     if (error instanceof HttpErrorResponse) {

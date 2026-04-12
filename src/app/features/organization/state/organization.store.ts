@@ -246,7 +246,7 @@ export class OrganizationStore {
     } catch (error) {
       this.departmentRecords.set([]);
       this.departmentsError.set(
-        getApiErrorMessage(error, 'Department information is unavailable right now.'),
+        getApiErrorMessage(error, "Departments can't be shown right now."),
       );
     } finally {
       this.isDepartmentsLoading.set(false);
@@ -267,7 +267,7 @@ export class OrganizationStore {
     } catch (error) {
       this.positionRecords.set([]);
       this.positionsError.set(
-        getApiErrorMessage(error, 'Position information is unavailable right now.'),
+        getApiErrorMessage(error, "Positions can't be shown right now."),
       );
     } finally {
       this.isPositionsLoading.set(false);
@@ -292,7 +292,7 @@ export class OrganizationStore {
     } catch (error) {
       this.leaveTypeRecords.set([]);
       this.leaveTypesError.set(
-        getLeaveTypeApiErrorMessage(error, 'Leave types are unavailable right now.'),
+        getLeaveTypeApiErrorMessage(error, "Leave types can't be shown right now."),
       );
     } finally {
       this.isLeaveTypesLoading.set(false);
@@ -311,7 +311,7 @@ export class OrganizationStore {
       this.departmentDetailRecord.set(department);
     } catch (error) {
       this.departmentDetailError.set(
-        getApiErrorMessage(error, 'Department detail could not be loaded right now.'),
+        getApiErrorMessage(error, "Department details can't be shown right now."),
       );
     } finally {
       this.isDepartmentDetailLoading.set(false);
@@ -330,7 +330,7 @@ export class OrganizationStore {
       this.positionDetailRecord.set(position);
     } catch (error) {
       this.positionDetailError.set(
-        getApiErrorMessage(error, 'Position detail could not be loaded right now.'),
+        getApiErrorMessage(error, "Position details can't be shown right now."),
       );
     } finally {
       this.isPositionDetailLoading.set(false);
@@ -349,7 +349,7 @@ export class OrganizationStore {
       this.leaveTypeDetailRecord.set(leaveType);
     } catch (error) {
       this.leaveTypeDetailError.set(
-        getLeaveTypeApiErrorMessage(error, 'Leave type detail could not be loaded right now.'),
+        getLeaveTypeApiErrorMessage(error, "Leave type details can't be shown right now."),
       );
     } finally {
       this.isLeaveTypeDetailLoading.set(false);
@@ -411,7 +411,7 @@ export class OrganizationStore {
       return true;
     } catch (error) {
       this.departmentDeleteError.set(
-        getApiErrorMessage(error, 'Department could not be removed.'),
+        getApiErrorMessage(error, "The department couldn't be deleted."),
       );
       return false;
     } finally {
@@ -469,7 +469,7 @@ export class OrganizationStore {
       return true;
     } catch (error) {
       this.positionDeleteError.set(
-        getApiErrorMessage(error, 'Position could not be removed.'),
+        getApiErrorMessage(error, "The position couldn't be deleted."),
       );
       return false;
     } finally {
@@ -527,7 +527,7 @@ export class OrganizationStore {
       return true;
     } catch (error) {
       this.leaveTypeDeleteError.set(
-        getLeaveTypeApiErrorMessage(error, 'Leave type could not be removed.'),
+        getLeaveTypeApiErrorMessage(error, "The leave type couldn't be deleted."),
       );
       return false;
     } finally {
@@ -606,7 +606,7 @@ export class OrganizationStore {
   }
 
   private handleDepartmentSubmitError(error: unknown): void {
-    this.departmentSubmitError.set(getApiErrorMessage(error, 'Changes could not be saved.'));
+    this.departmentSubmitError.set(getApiErrorMessage(error, "Your changes couldn't be saved."));
 
     if (error instanceof HttpErrorResponse) {
       const apiError = error.error as ApiErrorResponse | undefined;
@@ -615,7 +615,7 @@ export class OrganizationStore {
   }
 
   private handlePositionSubmitError(error: unknown): void {
-    this.positionSubmitError.set(getApiErrorMessage(error, 'Changes could not be saved.'));
+    this.positionSubmitError.set(getApiErrorMessage(error, "Your changes couldn't be saved."));
 
     if (error instanceof HttpErrorResponse) {
       const apiError = error.error as ApiErrorResponse | undefined;
@@ -625,7 +625,7 @@ export class OrganizationStore {
 
   private handleLeaveTypeSubmitError(error: unknown): void {
     this.leaveTypeSubmitError.set(
-      getLeaveTypeApiErrorMessage(error, 'Changes could not be saved.'),
+      getLeaveTypeApiErrorMessage(error, "Your changes couldn't be saved."),
     );
 
     if (error instanceof HttpErrorResponse) {

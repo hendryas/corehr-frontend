@@ -21,9 +21,9 @@ export interface EmployeeRecord {
 export interface QuickAction {
   title: string;
   description: string;
-  actionLabel: string;
   icon: AppIconName;
-  kind: 'modal' | 'ghost';
+  kind: 'route';
+  route: string;
 }
 
 export interface DashboardStatsPayload {

@@ -15,7 +15,7 @@ import { AttendanceStatusBadgeComponent } from '../../ui/attendance-status-badge
       @if (store.detailError()) {
         <div class="state-panel border-warning/25 bg-warning/5">
           <div>
-            <p class="text-base font-semibold text-ui-text">Attendance detail could not be loaded</p>
+            <p class="text-base font-semibold text-ui-text">Attendance details can't be shown right now</p>
             <p class="mt-2 text-sm text-ui-muted">{{ store.detailError() }}</p>
           </div>
           <div class="flex flex-wrap gap-3">
@@ -67,19 +67,19 @@ import { AttendanceStatusBadgeComponent } from '../../ui/attendance-status-badge
 
         <app-attendance-info-section
           [title]="'Employee information'"
-          [description]="'Basic employee details connected to this attendance record.'"
+          [description]="'Basic employee details for this attendance entry.'"
           [items]="employeeInfo()"
         />
 
         <app-attendance-info-section
           [title]="'Attendance information'"
-          [description]="'Daily attendance timing, status, and note details.'"
+          [description]="'Attendance date, time, status, and notes.'"
           [items]="attendanceInfo()"
         />
 
         <app-attendance-info-section
           [title]="'Record activity'"
-          [description]="'Latest record timestamps for this attendance entry.'"
+          [description]="'When this attendance entry was added and updated.'"
           [items]="recordInfo()"
         />
       }

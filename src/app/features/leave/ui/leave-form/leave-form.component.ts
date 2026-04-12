@@ -25,7 +25,7 @@ import { LeaveFormGroup } from './leave-form.utils';
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
           <h2 class="text-xl font-bold text-ui-text">Leave request information</h2>
-          <p class="mt-1 muted-copy">Choose the employee and complete the leave request details.</p>
+          <p class="mt-1 muted-copy">Choose the employee and fill in the leave details.</p>
         </div>
 
         <div class="mt-5 grid gap-5 md:grid-cols-2">
@@ -96,7 +96,7 @@ import { LeaveFormGroup } from './leave-form.utils';
       <section class="surface-card p-6">
         <div class="border-b border-ui-border pb-4">
           <h2 class="text-xl font-bold text-ui-text">Reason</h2>
-          <p class="mt-1 muted-copy">Explain the leave request so the team can review it clearly.</p>
+          <p class="mt-1 muted-copy">Share the reason for this leave request.</p>
         </div>
 
         <div class="mt-5 space-y-2">
@@ -106,7 +106,7 @@ import { LeaveFormGroup } from './leave-form.utils';
             rows="6"
             class="field-shell min-h-36 resize-y"
             formControlName="reason"
-            placeholder="Add the main reason for this leave request"
+            placeholder="Add the reason for this leave"
           ></textarea>
           @if (errorFor('reason')) {
             <p class="field-error">{{ errorFor('reason') }}</p>

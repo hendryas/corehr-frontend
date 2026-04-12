@@ -16,7 +16,7 @@ import { AppIconComponent } from '../../shared/ui/app-icon/app-icon.component';
           <span class="text-lg font-extrabold">C</span>
         </div>
         <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Enterprise CMS</p>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">HR Workspace</p>
           <h1 class="text-xl font-bold text-white">CoreHR</h1>
         </div>
       </div>
@@ -67,9 +67,9 @@ import { AppIconComponent } from '../../shared/ui/app-icon/app-icon.component';
       </button>
 
       <div class="mt-8 rounded-3xl border border-brand-gold/20 bg-brand-gold/10 p-4 xl:p-5">
-        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold">Foundation phase</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold">Helpful tip</p>
         <p class="mt-3 text-sm leading-6 text-slate-200">
-          Layout, navigation state, and mock widgets are ready to be connected to real APIs next.
+          Use the menu above to review employees, attendance, leave requests, and organization data in one place.
         </p>
       </div>
     </aside>
