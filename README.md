@@ -1,26 +1,27 @@
 # CoreHR Frontend
 
-Fondasi dashboard admin CMS untuk CoreHR berbasis Angular modern. Project ini fokus pada layout, struktur aplikasi, styling system, dan reusable UI components sebelum integrasi backend HR dilakukan.
+CoreHR Frontend adalah aplikasi HR management berbasis Angular untuk mengelola karyawan, absensi, cuti, dan data organisasi dalam satu dashboard.
 
-## Ringkasan
+README ini ditulis untuk pengguna publik yang ingin clone repository, menjalankan project secara lokal, lalu menyesuaikannya untuk kebutuhan sendiri.
 
-Saat ini project sudah memiliki:
+## Apa yang ada di project ini
 
-- Login page modern
-- Dashboard admin layout custom
-- Sidebar kiri, topbar, content area
-- State menu aktif
-- Responsive sidebar untuk mobile
-- Dummy stat cards
-- Dummy recent employees table
-- Dummy auth flow untuk simulasi login
-- Theme warna brand CoreHR
+Fitur utama yang sudah tersedia:
 
-## Tech Stack
+- Halaman login untuk HR
+- Halaman login terpisah untuk employee
+- Dashboard ringkasan HR
+- Modul employee management
+- Modul attendance management
+- Modul leave management
+- Modul organization management
+- Layout admin yang responsive
+- Route guard berbasis role
+- Integrasi API menggunakan Angular `HttpClient`
+
+## Tech stack
 
 - Angular 21
-- Standalone Components
-- Standalone Routing
 - TypeScript
 - Tailwind CSS v4
 - PostCSS
@@ -29,45 +30,97 @@ Saat ini project sudah memiliki:
 - RxJS
 - Vitest
 
-## UI Direction
+## Sebelum mulai
 
-Desain mengikuti pendekatan:
+Pastikan di komputer Anda sudah tersedia:
 
-- Modern enterprise HR dashboard
-- Clean
-- Profesional
-- White surface cards
-- Soft gray page background
-- Thin borders
-- Subtle shadows
-- Elegant dark sidebar
+- Node.js versi LTS
+- npm
+- Backend API yang bisa diakses dari frontend
 
-## Brand Colors
+Secara default, project ini mengarah ke:
 
-Corporate Modern:
+```text
+http://localhost:3000/api
+```
 
-- `brand.blue`: `#1F6FB2`
-- `brand.blueDark`: `#185A91`
-- `brand.green`: `#2F7D4A`
-- `brand.greenDark`: `#1F5E38`
-- `brand.gold`: `#D9A11A`
+Konfigurasi endpoint saat ini ada di:
 
-Neutral:
+`src/app/core/constants/api.constants.ts`
 
-- `ui.bg`: `#F8FAFC`
-- `ui.surface`: `#FFFFFF`
-- `ui.border`: `#E2E8F0`
-- `ui.text`: `#0F172A`
-- `ui.muted`: `#475569`
+## Quick start
 
-Semantic:
+### 1. Clone repository
 
-- `success`: `#16A34A`
-- `warning`: `#F59E0B`
-- `danger`: `#DC2626`
-- `info`: `#0EA5E9`
+```bash
+git clone <url-repository-anda>
+cd corehr-frontend
+```
 
-## Project Structure
+### 2. Install dependency
+
+```bash
+npm install
+```
+
+### 3. Pastikan backend API berjalan
+
+Frontend ini membutuhkan backend untuk proses login dan pengambilan data modul seperti employee, attendance, leave, dan organization.
+
+Jika backend Anda tidak berjalan di `http://localhost:3000/api`, ubah nilai berikut:
+
+```ts
+export const API_BASE_URL = 'http://localhost:3000/api';
+```
+
+File:
+
+`src/app/core/constants/api.constants.ts`
+
+### 4. Jalankan aplikasi
+
+```bash
+npm start
+```
+
+Setelah itu buka:
+
+```text
+http://localhost:4200
+```
+
+## Alur penggunaan pertama
+
+Saat aplikasi dibuka, route awal akan diarahkan ke halaman login:
+
+- `/login` untuk HR
+- `/employee-login` untuk employee
+
+Setelah login berhasil:
+
+- akun HR diarahkan ke dashboard dan modul admin
+- akun employee diarahkan ke halaman sesuai role
+
+Session login disimpan di browser agar pengguna tetap terautentikasi selama sesi masih aktif.
+
+## Modul yang tersedia
+
+Project ini sudah memiliki struktur frontend untuk beberapa area utama:
+
+- `Dashboard`
+  Menampilkan ringkasan informasi HR dan pintasan ke modul utama.
+- `Employees`
+  Untuk melihat, menambah, mengubah, dan mengelola data karyawan.
+- `Attendance`
+  Untuk memantau dan mengelola data absensi.
+- `Leave`
+  Untuk membuat, meninjau, dan memproses pengajuan cuti.
+- `Organization`
+  Untuk mengelola departemen, posisi, dan jenis cuti.
+
+## Struktur project
+
+Berikut struktur utama folder aplikasi:
 
 ```text
 src/app/
@@ -77,84 +130,30 @@ src/app/
     interceptors/
     models/
     services/
-  shared/
-    components/
-    types/
-    ui/
     utils/
+  features/
+    auth/
+    dashboard/
+    employees/
+    attendance/
+    leave/
+    organization/
   layout/
     auth-layout/
     dashboard-layout/
     page-header/
     sidebar/
     topbar/
-  features/
-    auth/
-      pages/login/
-    dashboard/
-      components/
-        recent-employees-table/
-        stat-card/
-      pages/dashboard-home/
-  app.config.ts
-  app.routes.ts
+  shared/
+    components/
+    types/
+    ui/
+    utils/
 ```
 
-## Routes
+## Script yang bisa digunakan
 
-Route yang sudah tersedia:
-
-- `/` -> redirect ke `/login`
-- `/login`
-- `/dashboard`
-
-## Dummy Auth Flow
-
-Autentikasi saat ini masih dummy dan belum terhubung ke backend.
-
-Perilaku saat ini:
-
-- User membuka `/login`
-- Submit form login
-- Session dummy disimpan ke `localStorage`
-- User diarahkan ke `/dashboard`
-- Route dashboard dilindungi guard
-
-File terkait:
-
-- `src/app/core/services/auth-session.service.ts`
-- `src/app/core/guards/auth.guard.ts`
-- `src/app/core/guards/guest.guard.ts`
-
-## Menjalankan Project
-
-Install dependency:
-
-```bash
-npm install
-```
-
-Jalankan local server:
-
-```bash
-npm start
-```
-
-Atau:
-
-```bash
-ng serve
-```
-
-Lalu buka:
-
-```text
-http://localhost:4200
-```
-
-## Available Scripts
-
-Development:
+Menjalankan development server:
 
 ```bash
 npm start
@@ -166,81 +165,64 @@ Build production:
 npm run build
 ```
 
-Unit test:
+Menjalankan test:
 
 ```bash
-npm test -- --watch=false
+npm test
 ```
 
-## Styling Notes
+Build mode watch:
 
-Theme global dan tokens disimpan di:
+```bash
+npm run watch
+```
 
+## Menyesuaikan project ini
+
+Jika Anda ingin menggunakan project ini sebagai dasar aplikasi sendiri, titik awal yang paling penting biasanya:
+
+1. Ubah `API_BASE_URL` agar sesuai dengan backend Anda.
+2. Sesuaikan flow login dan struktur respons API pada service auth.
+3. Sesuaikan model data pada modul employee, attendance, leave, dan organization.
+4. Ubah branding seperti nama aplikasi, teks login, dan warna tema.
+
+Beberapa file yang biasanya pertama kali diedit:
+
+- `src/app/core/constants/api.constants.ts`
+- `src/app/core/constants/app-shell.constants.ts`
+- `src/app/core/services/auth-api.service.ts`
 - `src/styles.css`
 
-Tailwind diaktifkan melalui:
+## Troubleshooting
 
-- `postcss.config.json`
+### Login gagal
 
-Flowbite Angular digunakan untuk:
+Hal yang paling sering menjadi penyebab:
 
-- Dropdown
-- Modal
-- Badge
-- Pagination
-- Form wrapper
-- Table wrapper
+- backend belum berjalan
+- `API_BASE_URL` belum sesuai
+- format respons login dari backend berbeda dengan yang diharapkan frontend
 
-Tetapi layout utama tetap custom buatan sendiri.
+### Halaman terbuka tetapi data kosong
 
-## Reusable Components
+Biasanya berarti request API berhasil dipanggil tetapi endpoint data belum tersedia, responsnya berbeda, atau data dari backend memang belum ada.
 
-Komponen reusable utama saat ini:
+### Ingin ganti port atau host backend
 
-- `app-page-header`
-- `app-sidebar`
-- `app-topbar`
-- `app-stat-card`
-- `app-recent-employees-table`
-- `app-icon`
+Edit file:
 
-## Status Saat Ini
+`src/app/core/constants/api.constants.ts`
 
-Yang sudah siap:
+## Build untuk production
 
-- Fondasi struktur project
-- Fondasi theme system
-- Dashboard layout
-- Login layout
-- Responsive behavior dasar
-- UI dashboard untuk demo internal
-
-Yang masih dummy:
-
-- Login API
-- User profile API
-- Data employee API
-- Attendance API
-- Leave API
-- Payroll API
-- Notification API
-- Search API
-
-## Catatan Pengembangan Lanjutan
-
-Tahap berikutnya yang disarankan:
-
-1. Sambungkan login ke backend auth
-2. Tambahkan HTTP service dan interceptor
-3. Ganti mock dashboard data menjadi API data
-4. Tambahkan feature modules/pages nyata seperti Employees, Attendance, Leave, Payroll, Settings
-5. Tambahkan state management jika kebutuhan data makin kompleks
-
-## Verification
-
-Implementasi terakhir sudah diverifikasi dengan:
+Untuk membuat hasil build production:
 
 ```bash
 npm run build
-npm test -- --watch=false
 ```
+
+Hasil build akan tersedia di folder `dist/`.
+
+## Catatan
+
+Project ini saat ini belum memakai sistem environment terpisah untuk base URL API. Endpoint masih disimpan dalam konstanta sederhana, jadi jika Anda ingin deployment ke beberapa environment, langkah berikutnya yang disarankan adalah memindahkan konfigurasi API ke setup environment yang lebih fleksibel.
